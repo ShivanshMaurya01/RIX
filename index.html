@@ -1,1 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RIX | Raebareli Industrial Exchange</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-24">
 
+    <nav class="sticky top-0 z-50 glass border-b border-gray-100 px-5 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <div class="bg-blue-600 p-2 rounded-lg">
+                <i class="fas fa-microchip text-white text-xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">RIX <span class="text-blue-600">LIVE</span></h1>
+        </div>
+        <button class="text-gray-400 hover:text-blue-600"><i class="fas fa-bell text-xl"></i></button>
+    </nav>
+
+    <div class="px-5 mt-6">
+        <div class="relative">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="searchInput" placeholder="Search motors, tools, shops..." 
+                   class="w-full pl-11 pr-4 py-4 bg-white rounded-2xl shadow-sm border-none focus:ring-2 focus:ring-blue-500 text-lg transition-all">
+        </div>
+        
+        <div class="flex gap-2 overflow-x-auto mt-4 pb-2 no-scrollbar">
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-full whitespace-nowrap text-sm font-semibold">All</button>
+            <button class="bg-white border text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm">Spare Parts</button>
+            <button class="bg-white border text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm">Repairing</button>
+            <button class="bg-white border text-gray-600 px-4 py-2 rounded-full whitespace-nowrap text-sm">Hardware</button>
+        </div>
+    </div>
+
+    <main class="px-5 mt-4 space-y-4" id="shopContainer">
+        <div class="animate-pulse space-y-4">
+            <div class="h-32 bg-gray-200 rounded-2xl"></div>
+            <div class="h-32 bg-gray-200 rounded-2xl"></div>
+        </div>
+    </main>
+
+    <div class="fixed bottom-0 left-0 right-0 glass border-t border-gray-100 px-8 py-4 flex justify-between items-center safe-area-bottom">
+        <button class="flex flex-col items-center gap-1 text-blue-600">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-[10px] font-bold uppercase">Home</span>
+        </button>
+        <button onclick="window.location.reload()" class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fas fa-sync text-xl"></i>
+            <span class="text-[10px] font-bold uppercase">Refresh</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fas fa-plus-circle text-xl text-blue-500"></i>
+            <span class="text-[10px] font-bold uppercase">Join</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-400">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-[10px] font-bold uppercase">Account</span>
+        </button>
+    </div>
+
+    <script>
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
+
+        async function initApp() {
+            try {
+                const response = await fetch(CSV_URL);
+                const text = await response.text();
+                const lines = text.split('\n').filter(line => line.trim() !== "");
+                const headers = lines[0].split(',');
+                
+                const shops = lines.slice(1).map(line => {
+                    const values = line.split(',');
+                    return {
+                        name: values[0]?.replace(/"/g, ''),
+                        cat: values[1]?.replace(/"/g, ''),
+                        loc: values[2]?.replace(/"/g, ''),
+                        phone: values[3]?.replace(/"/g, '')
+                    };
+                });
+
+                renderShops(shops);
+
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    const term = e.target.value.toLowerCase();
+                    const filtered = shops.filter(s => 
+                        s.name.toLowerCase().includes(term) || 
+                        s.cat.toLowerCase().includes(term)
+                    );
+                    renderShops(filtered);
+                });
+
+            } catch (err) {
+                document.getElementById('shopContainer').innerHTML = `<p class="text-red-500 text-center">Error loading shops. Please check internet connection.</p>`;
+            }
+        }
+
+        function renderShops(list) {
+            const container = document.getElementById('shopContainer');
+            if (list.length === 0) {
+                container.innerHTML = `<div class="text-center py-10 text-gray-400 italic">No shops found...</div>`;
+                return;
+            }
+            container.innerHTML = list.map(shop => `
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100 flex justify-between items-center active:bg-gray-50 transition-colors">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="font-bold text-lg text-gray-900">${shop.name}</h3>
+                            <i class="fas fa-check-circle text-blue-500 text-xs"></i>
+                        </div>
+                        <div class="flex gap-2 items-center text-xs font-semibold uppercase tracking-wider text-blue-500 mb-2">
+                            <span>${shop.cat}</span>
+                        </div>
+                        <p class="text-gray-500 text-sm flex items-center gap-1">
+                            <i class="fas fa-map-marker-alt text-gray-300"></i> ${shop.loc}
+                        </p>
+                    </div>
+                    <a href="tel:${shop.phone}" class="bg-green-500 w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-green-100 active:scale-95 transition-transform">
+                        <i class="fas fa-phone-alt text-white text-xl"></i>
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
