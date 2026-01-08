@@ -3,84 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIX Raebareli</title>
+    <title>RIX - Raebareli Industrial Exchange</title>
     <style>
-        /* Simple, solid styles that won't break */
-        body { font-family: Arial, sans-serif; margin: 0; background-color: #f8f9fa; color: #333; }
-        .top-bar { background: #0056b3; color: white; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; }
-        .container { padding: 15px; }
-        .search-input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .card-info { flex: 1; }
-        .shop-name { font-size: 18px; font-weight: bold; margin: 0; color: #0056b3; }
-        .shop-detail { font-size: 14px; color: #666; margin: 4px 0; }
-        .call-button { background: #28a745; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 14px; }
-        #loading { text-align: center; padding: 20px; color: #888; }
+        :root { --primary: #1a73e8; --success: #28a745; --gold: #ffd700; --dark: #1e293b; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background: #f0f4f8; padding-bottom: 90px; }
+        
+        .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 30px 15px; text-align: center; border-radius: 0 0 25px 25px; }
+        .search-box { margin: -25px 20px 0 20px; }
+        #searchInput { width: 100%; padding: 15px 20px; border-radius: 30px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); font-size: 16px; outline: none; box-sizing: border-box; }
+
+        .categories { display: flex; overflow-x: auto; padding: 20px 15px; gap: 10px; scrollbar-width: none; }
+        .chip { background: white; border: 1.5px solid var(--primary); color: var(--primary); padding: 8px 18px; border-radius: 20px; font-size: 13px; white-space: nowrap; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .chip.active { background: var(--primary); color: white; }
+
+        .card { background: white; margin: 12px 15px; padding: 18px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid #ddd; }
+        .featured { border-left-color: var(--gold); background: #fffef0; }
+        .verified-badge { background: #e3f2fd; color: var(--primary); font-size: 10px; padding: 3px 8px; border-radius: 5px; font-weight: 800; display: inline-block; margin-bottom: 5px; }
+        
+        .shop-info h3 { margin: 0; font-size: 18px; color: var(--dark); }
+        .shop-info p { margin: 3px 0; font-size: 13px; color: #64748b; }
+
+        .call-btn { background: var(--success); color: white; text-decoration: none; width: 50px; height: 50px; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); }
+
+        .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; z-index: 1000; }
+        .nav-btn { text-decoration: none; color: #64748b; font-size: 11px; text-align: center; font-weight: 600; }
+        .add-business-btn { background: var(--primary); color: white !important; padding: 10px 20px; border-radius: 12px; margin-top: -5px; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">RIX INDUSTRIAL EXCHANGE</div>
+    <div class="header">
+        <h1 style="margin:0; letter-spacing: 1px;">RIX LIVE</h1>
+        <p style="margin:5px 0 0 0; opacity:0.9; font-size: 14px;">Raebareli Industrial Exchange</p>
+    </div>
 
-    <div class="container">
-        <input type="text" class="search-input" id="search" placeholder="Search shops (e.g. Shiv Machinery)..." onkeyup="filterList()">
-        
-        <div id="loading">Checking Raebareli Industrial Database...</div>
-        <div id="shop-container"></div>
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search by shop name or tool..." onkeyup="filterShops()">
+    </div>
+
+    <div class="categories" id="catList">
+        <div class="chip active" onclick="filterCat('All')">All</div>
+        <div class="chip" onclick="filterCat('Spare Parts')">Spare Parts</div>
+        <div class="chip" onclick="filterCat('Repairing')">Repairing</div>
+        <div class="chip" onclick="filterCat('Hardware')">Hardware</div>
+    </div>
+
+    <div id="shopList">
+        <div style="text-align:center; padding:50px; color:#94a3b8;">Loading Local Industry Data...</div>
+    </div>
+
+    <div class="footer-nav">
+        <a href="#" class="nav-btn" style="color:var(--primary);">🏠<br>Home</a>
+        <a href="https://forms.gle/YOUR_GOOGLE_FORM_LINK" target="_blank" class="nav-btn add-business-btn">🚀 LIST YOUR SHOP</a>
+        <a href="https://wa.me/917317208851?text=Hi, I want to promote my business on RIX" class="nav-btn">💰 Advertise</a>
     </div>
 
     <script>
-        // Your specific published CSV link
-        const scriptURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
 
-        async function fetchShops() {
+        async function loadData() {
             try {
-                const response = await fetch(scriptURL);
-                const data = await response.text();
-                const rows = data.split('\n').slice(1); // Skip header row
-                
-                const container = document.getElementById('shop-container');
-                const loading = document.getElementById('loading');
-                
-                let html = '';
-                rows.forEach(row => {
-                    const columns = row.split(',');
-                    if (columns.length >= 4 && columns[0].trim() !== "") {
-                        const name = columns[0].replace(/"/g, "");
-                        const cat = columns[1].replace(/"/g, "");
-                        const loc = columns[2].replace(/"/g, "");
-                        const phone = columns[3].replace(/"/g, "");
+                const res = await fetch(CSV_URL);
+                const data = await res.text();
+                const rows = data.split('\n').slice(1);
+                const container = document.getElementById('shopList');
+                container.innerHTML = '';
 
-                        html += `
-                            <div class="card">
-                                <div class="card-info">
-                                    <p class="shop-name">${name}</p>
-                                    <p class="shop-detail"><b>Type:</b> ${cat}</p>
-                                    <p class="shop-detail"><b>📍</b> ${loc}</p>
+                rows.forEach(row => {
+                    const col = row.split(',').map(c => c.trim().replace(/"/g, ""));
+                    if(col[0]) {
+                        const isFeatured = col[4] === "YES"; 
+                        const isVerified = col[5] === "YES"; 
+                        
+                        container.innerHTML += `
+                            <div class="card ${isFeatured ? 'featured' : ''}" data-cat="${col[1]}">
+                                <div class="shop-info">
+                                    ${isVerified ? '<span class="verified-badge">✅ VERIFIED PARTNER</span>' : ''}
+                                    <h3>${col[0]} ${isFeatured ? '⭐' : ''}</h3>
+                                    <p>⚙️ ${col[1]}</p>
+                                    <p>📍 ${col[2]}</p>
                                 </div>
-                                <a href="tel:${phone}" class="call-button">CALL</a>
+                                <a href="tel:${col[3]}" class="call-btn">📞</a>
                             </div>
                         `;
                     }
                 });
+            } catch(e) { container.innerHTML = "<p style='text-align:center'>Internet Error</p>"; }
+        }
 
-                loading.style.display = 'none';
-                container.innerHTML = html;
-            } catch (error) {
-                document.getElementById('loading').innerText = "Error loading data. Please check internet.";
+        function filterShops() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('card');
+            for (let card of cards) {
+                card.style.display = card.innerText.toLowerCase().includes(input) ? "flex" : "none";
             }
         }
 
-        function filterList() {
-            const input = document.getElementById('search').value.toLowerCase();
-            const cards = document.getElementsByClassName('card');
-            for (let i = 0; i < cards.length; i++) {
-                const text = cards[i].innerText.toLowerCase();
-                cards[i].style.display = text.includes(input) ? "flex" : "none";
+        function filterCat(cat) {
+            let cards = document.getElementsByClassName('card');
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            for (let card of cards) {
+                if(cat === 'All') card.style.display = "flex";
+                else card.style.display = card.getAttribute('data-cat') === cat ? "flex" : "none";
             }
         }
 
-        fetchShops();
+        loadData();
     </script>
 </body>
 </html>
