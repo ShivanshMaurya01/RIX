@@ -2,119 +2,125 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RIX - Raebareli Industrial Exchange</title>
     <style>
-        :root { --primary: #1a73e8; --success: #28a745; --gold: #ffd700; --dark: #1e293b; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f4f8; padding-bottom: 100px; }
+        :root { --primary: #1a73e8; --success: #28a745; --gold: #ffd700; --dark: #1e293b; --light: #f8fafc; }
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background: #f0f4f8; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; }
         
-        /* Header Section */
-        .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 30px 15px; text-align: center; border-radius: 0 0 25px 25px; }
-        .search-box { margin: -25px 20px 0 20px; }
-        #searchInput { width: 100%; padding: 15px 20px; border-radius: 30px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); font-size: 16px; outline: none; box-sizing: border-box; }
+        /* Header & Search */
+        .header { background: linear-gradient(135deg, #1a73e8, #0d47a1); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .search-container { margin: -30px 20px 0 20px; position: relative; z-index: 10; }
+        #searchInput { width: 100%; padding: 18px 25px; border-radius: 35px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); font-size: 16px; outline: none; box-sizing: border-box; }
 
-        /* Lead Generation Button */
-        .lead-gen-banner { background: var(--dark); color: white; margin: 25px 15px 10px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .lead-btn { background: var(--gold); color: black; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 12px; }
+        /* Inquiry Banner */
+        .inquiry-banner { background: var(--dark); color: white; margin: 25px 15px 10px; padding: 18px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
+        .inquiry-text b { display: block; font-size: 16px; color: var(--gold); }
+        .inquiry-text span { font-size: 12px; opacity: 0.8; }
+        .post-btn { background: var(--gold); color: #000; padding: 10px 18px; border-radius: 12px; text-decoration: none; font-weight: 800; font-size: 13px; text-transform: uppercase; }
 
         /* Categories */
-        .categories { display: flex; overflow-x: auto; padding: 10px 15px; gap: 10px; scrollbar-width: none; }
-        .chip { background: white; border: 1.5px solid var(--primary); color: var(--primary); padding: 8px 18px; border-radius: 20px; font-size: 13px; white-space: nowrap; font-weight: 600; cursor: pointer; }
-        .chip.active { background: var(--primary); color: white; }
+        .categories { display: flex; overflow-x: auto; padding: 15px; gap: 10px; scrollbar-width: none; }
+        .categories::-webkit-scrollbar { display: none; }
+        .chip { background: white; border: 1.5px solid var(--primary); color: var(--primary); padding: 10px 20px; border-radius: 25px; font-size: 13px; white-space: nowrap; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .chip.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3); }
 
         /* Shop Cards */
-        .card { background: white; margin: 12px 15px; padding: 18px; border-radius: 18px; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 6px solid #ddd; position: relative; }
-        .featured { border-left-color: var(--gold); background: #fffef0; }
-        .verified-badge { color: var(--primary); font-size: 11px; font-weight: 800; margin-bottom: 5px; display: block; }
+        .card { background: white; margin: 15px; padding: 20px; border-radius: 20px; display: flex; flex-direction: column; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 8px solid #cbd5e1; position: relative; transition: 0.3s; }
+        .card.featured { border-left-color: var(--gold); background: #fffef2; transform: scale(1.02); box-shadow: 0 8px 20px rgba(255, 215, 0, 0.15); }
+        .verified-tag { background: #e0f2fe; color: var(--primary); font-size: 10px; padding: 4px 10px; border-radius: 6px; font-weight: 800; display: inline-block; margin-bottom: 8px; }
         
-        .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .shop-info h3 { margin: 0; font-size: 18px; color: var(--dark); }
-        .shop-info p { margin: 3px 0; font-size: 13px; color: #64748b; }
+        .shop-name { margin: 0; font-size: 20px; color: var(--dark); display: flex; align-items: center; gap: 5px; }
+        .shop-detail { margin: 5px 0; font-size: 14px; color: #64748b; display: flex; align-items: center; gap: 5px; }
 
-        .card-actions { display: flex; gap: 10px; margin-top: 15px; }
-        .action-btn { flex: 1; text-align: center; padding: 10px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 14px; }
-        .call-btn { background: var(--success); color: white; }
-        .share-btn { background: #e2e8f0; color: var(--dark); }
+        .btn-group { display: flex; gap: 12px; margin-top: 20px; }
+        .btn { flex: 1; padding: 14px; border-radius: 15px; text-decoration: none; font-weight: 700; font-size: 14px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-call { background: var(--success); color: white; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3); }
+        .btn-share { background: #f1f5f9; color: var(--dark); }
 
-        /* Footer Nav */
-        .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #eee; z-index: 1000; }
-        .nav-btn { text-decoration: none; color: #64748b; font-size: 11px; text-align: center; font-weight: 600; }
-        .add-business { background: var(--primary); color: white !important; padding: 10px 15px; border-radius: 12px; margin-top: -5px; }
+        /* Bottom Navigation */
+        .navbar { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #e2e8f0; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); }
+        .nav-item { text-decoration: none; color: #94a3b8; font-size: 11px; font-weight: 700; text-align: center; }
+        .nav-item.active { color: var(--primary); }
+        .nav-special { background: var(--primary); color: white !important; padding: 10px 20px; border-radius: 15px; margin-top: -8px; box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4); }
+
+        /* Loading Animation */
+        #loader { text-align: center; padding: 50px; color: #64748b; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 style="margin:0;">RIX LIVE</h1>
-        <p style="margin:5px 0 0 0; opacity:0.9; font-size: 14px;">Raebareli's Industrial Network</p>
+        <h1 style="margin:0; font-size: 28px; letter-spacing: -1px;">RIX RAEBARELI</h1>
+        <p style="margin:5px 0 0 0; opacity: 0.8; font-size: 14px;">Industrial Exchange Hub</p>
     </div>
 
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search for motors, tools, shops..." onkeyup="filterShops()">
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search for tools, shops, or services..." onkeyup="filterShops()">
     </div>
 
-    <div class="lead-gen-banner">
-        <div>
-            <div style="font-weight:bold; font-size:14px;">Need something specific?</div>
-            <div style="font-size:11px; opacity:0.8;">Post your requirement here</div>
+    <div class="inquiry-banner">
+        <div class="inquiry-text">
+            <b>Post a Requirement</b>
+            <span>Directly message the admin for parts</span>
         </div>
-        <a href="https://wa.me/917317208851?text=I%20need%20a%20specific%20industrial%20part:" class="lead-btn">POST NOW</a>
+        <a href="https://wa.me/917317208851?text=Hello%20RIX%20Admin,%20I%20need%20a%20specific%20industrial%20part/service:%20" class="post-btn">Post Now</a>
     </div>
 
     <div class="categories" id="catList">
-        <div class="chip active" onclick="filterCat('All')">All</div>
-        <div class="chip" onclick="filterCat('Spare Parts')">Spare Parts</div>
-        <div class="chip" onclick="filterCat('Repairing')">Repairing</div>
-        <div class="chip" onclick="filterCat('Hardware')">Hardware</div>
+        <div class="chip active" onclick="filterCat('All', this)">All</div>
+        <div class="chip" onclick="filterCat('Spare Parts', this)">Spare Parts</div>
+        <div class="chip" onclick="filterCat('Repairing', this)">Repairing</div>
+        <div class="chip" onclick="filterCat('Hardware', this)">Hardware</div>
+        <div class="chip" onclick="filterCat('Electrical', this)">Electrical</div>
     </div>
 
     <div id="shopList">
-        <div style="text-align:center; padding:50px; color:#94a3b8;">Connecting to Hub...</div>
+        <div id="loader">Fetching Local Data...</div>
     </div>
 
-    <div class="footer-nav">
-        <a href="#" class="nav-btn" style="color:var(--primary);">🏠<br>Home</a>
-        <a href="https://wa.me/917317208851?text=Hi, I want to list my business on RIX" class="nav-btn add-business">🚀 LIST SHOP</a>
-        <a href="https://wa.me/917317208851?text=I%20want%20to%20advertise" class="nav-btn">💰 Advertise</a>
+    <div class="navbar">
+        <a href="#" class="nav-item active">🏠<br>HOME</a>
+        <a href="https://wa.me/917317208851?text=I%20want%20to%20list%20my%20business%20on%20RIX" class="nav-item nav-special">🚀 LIST SHOP</a>
+        <a href="https://wa.me/917317208851?text=I%20want%20to%20advertise%20on%20RIX" class="nav-item">💰 EARN</a>
     </div>
 
     <script>
+        // Your Google Sheets CSV Link
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
 
-        async function loadData() {
+        async function loadShops() {
             try {
-                const res = await fetch(CSV_URL);
-                const data = await res.text();
+                const response = await fetch(CSV_URL);
+                const data = await response.text();
                 const rows = data.split('\n').slice(1);
-                const container = document.getElementById('shopList');
-                container.innerHTML = '';
+                const list = document.getElementById('shopList');
+                list.innerHTML = '';
 
                 rows.forEach(row => {
-                    const col = row.split(',').map(c => c.trim().replace(/"/g, ""));
+                    const col = row.split(',').map(item => item.trim().replace(/"/g, ""));
                     if(col[0]) {
-                        const isFeatured = col[4] === "YES"; 
-                        const isVerified = col[5] === "YES"; 
-                        const shareText = encodeURIComponent(`Check out ${col[0]} on RIX Raebareli! 📍 ${col[2]} 🛠️ ${col[1]}`);
+                        const isPremium = col[4] === "YES";
+                        const isVerified = col[5] === "YES";
+                        const shareMsg = encodeURIComponent(`Find ${col[0]} on RIX Raebareli! 📍 ${col[2]} 📞 Tap to Call: ${col[3]}`);
                         
-                        container.innerHTML += `
-                            <div class="card ${isFeatured ? 'featured' : ''}" data-cat="${col[1]}">
-                                <div class="card-header">
-                                    <div class="shop-info">
-                                        ${isVerified ? '<span class="verified-badge">✅ VERIFIED PARTNER</span>' : ''}
-                                        <h3>${col[0]} ${isFeatured ? '⭐' : ''}</h3>
-                                        <p>⚙️ ${col[1]}</p>
-                                        <p>📍 ${col[2]}</p>
-                                    </div>
-                                </div>
-                                <div class="card-actions">
-                                    <a href="tel:${col[3]}" class="action-btn call-btn">📞 CALL</a>
-                                    <a href="https://wa.me/?text=${shareText}" class="action-btn share-btn">🔗 SHARE</a>
+                        list.innerHTML += `
+                            <div class="card ${isPremium ? 'featured' : ''}" data-category="${col[1]}">
+                                ${isVerified ? '<span class="verified-tag">✅ VERIFIED PARTNER</span>' : ''}
+                                <h3 class="shop-name">${col[0]} ${isPremium ? '⭐' : ''}</h3>
+                                <p class="shop-detail">⚙️ Category: ${col[1]}</p>
+                                <p class="shop-detail">📍 Area: ${col[2]}</p>
+                                <div class="btn-group">
+                                    <a href="tel:${col[3]}" class="btn btn-call">📞 CALL NOW</a>
+                                    <a href="https://wa.me/?text=${shareMsg}" class="btn btn-share">🔗 SHARE</a>
                                 </div>
                             </div>
                         `;
                     }
                 });
-            } catch(e) { container.innerHTML = "<p style='text-align:center'>Loading Error</p>"; }
+            } catch (error) {
+                document.getElementById('shopList').innerHTML = '<p style="text-align:center; padding:20px;">Connection Error. Refresh Page.</p>';
+            }
         }
 
         function filterShops() {
@@ -125,17 +131,19 @@
             }
         }
 
-        function filterCat(cat) {
+        function filterCat(category, element) {
             let cards = document.getElementsByClassName('card');
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
+            element.classList.add('active');
+            
             for (let card of cards) {
-                if(cat === 'All') card.style.display = "flex";
-                else card.style.display = card.getAttribute('data-cat') === cat ? "flex" : "none";
+                if(category === 'All') card.style.display = "flex";
+                else card.style.display = card.getAttribute('data-category') === category ? "flex" : "none";
             }
         }
 
-        loadData();
+        // Initialize App
+        loadShops();
     </script>
 </body>
 </html>
