@@ -4,340 +4,358 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Raebareli Industrial Exchange | RIX Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --accent: #f59e0b;
+            --primary-glow: rgba(37, 99, 235, 0.4);
+            --accent: #fbbf24;
             --success: #10b981;
             --dark: #0f172a;
-            --glass: rgba(255, 255, 255, 0.9);
-            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            --surface: #ffffff;
+            --body-bg: #f1f5f9;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --glass: rgba(255, 255, 255, 0.85);
+            --card-radius: 28px;
         }
+
+        * { transition: all 0.25s ease-in-out; font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
             margin: 0;
-            background: #f8fafc;
-            color: var(--dark);
-            line-height: 1.5;
-            padding-bottom: 90px;
+            background: var(--body-bg);
+            color: var(--text-main);
+            padding-bottom: 110px;
+            overflow-x: hidden;
         }
 
-        /* Premium Header */
+        /* Animated Premium Header */
         .header {
-            background: linear-gradient(135deg, var(--dark) 0%, #1e293b 100%);
+            background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
             color: white;
-            padding: 50px 20px 70px;
+            padding: 60px 24px 80px;
             text-align: center;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
             position: relative;
-            clip-path: ellipse(150% 100% at 50% 0%);
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            opacity: 0.1;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(to right, #fff, #94a3b8);
+            letter-spacing: -1.5px;
+            text-transform: uppercase;
+        }
+
+        .header span {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--accent), #fef08a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 800;
         }
 
-        .header p {
-            margin-top: 8px;
-            font-size: 15px;
-            color: #94a3b8;
-            font-weight: 500;
-        }
-
-        /* Floating Search */
-        .search-wrapper {
-            margin: -35px 20px 0;
+        /* Advanced Search Bar */
+        .search-container {
+            margin: -40px 20px 0;
             position: relative;
             z-index: 100;
         }
 
-        #searchInput {
-            width: 100%;
-            padding: 20px 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow);
-            font-size: 16px;
-            outline: none;
-            transition: 0.3s;
-            box-sizing: border-box;
-        }
-
-        #searchInput:focus {
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
-            transform: translateY(-2px);
-        }
-
-        /* Premium Banner */
-        .hero-banner {
-            background: linear-gradient(90deg, #1e293b, #334155);
-            margin: 30px 20px 10px;
-            padding: 20px;
-            border-radius: 24px;
-            color: white;
+        .search-box {
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255,255,255,0.05);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 10px 10px 10px 25px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.4);
         }
 
-        .hero-icon {
-            font-size: 30px;
-            background: rgba(255,255,255,0.1);
-            padding: 10px;
-            border-radius: 15px;
+        #searchInput {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 12px 0;
+            font-size: 16px;
+            font-weight: 600;
+            outline: none;
+            color: var(--dark);
         }
 
-        .hero-content b { color: var(--accent); font-size: 18px; display: block; }
-        .hero-content span { font-size: 13px; opacity: 0.7; }
+        .search-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
 
-        /* Modern Tabs/Chips */
-        .section-label { padding: 0 25px; margin-top: 25px; font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .scroll-row { display: flex; overflow-x: auto; padding: 10px 20px; gap: 10px; scrollbar-width: none; }
+        /* Dynamic Stats Chips */
+        .scroll-row {
+            display: flex;
+            overflow-x: auto;
+            padding: 15px 20px;
+            gap: 12px;
+            scrollbar-width: none;
+        }
         .scroll-row::-webkit-scrollbar { display: none; }
 
         .chip {
-            background: white;
-            padding: 10px 22px;
-            border-radius: 14px;
+            background: var(--surface);
+            padding: 12px 24px;
+            border-radius: 20px;
             font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            color: #475569;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: 0.2s;
-        }
-
-        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        /* High-End Shop Cards */
-        .card {
-            background: white;
-            margin: 15px 20px;
-            padding: 24px;
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card.premium {
-            border: 2px solid #fbbf24;
-            background: linear-gradient(180deg, #fffcf0 0%, #fff 100%);
-        }
-
-        .card.premium::after {
-            content: 'PREMIUM';
-            position: absolute;
-            top: 15px;
-            right: -30px;
-            background: #fbbf24;
-            color: #000;
-            font-size: 10px;
-            font-weight: 900;
-            padding: 5px 40px;
-            transform: rotate(45deg);
-        }
-
-        .badge-row { display: flex; gap: 8px; margin-bottom: 12px; }
-        .badge { font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; }
-        .badge-verified { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-
-        .shop-title { font-size: 22px; font-weight: 800; margin: 0; color: var(--dark); display: flex; align-items: center; gap: 8px; }
-        .shop-meta { color: #64748b; font-size: 14px; margin: 6px 0; display: flex; align-items: center; gap: 6px; }
-
-        /* Luxury Buttons */
-        .action-row { display: flex; gap: 12px; margin-top: 25px; }
-        .btn-luxury {
-            flex: 1;
-            padding: 16px;
-            border-radius: 18px;
-            text-decoration: none;
             font-weight: 700;
-            font-size: 14px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: 0.3s;
+            white-space: nowrap;
+            color: var(--text-sub);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            cursor: pointer;
+            border: 2px solid transparent;
         }
 
-        .btn-primary { background: var(--primary); color: white; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
-        .btn-secondary { background: #f1f5f9; color: var(--dark); }
-        .btn-primary:active { transform: scale(0.95); }
+        .chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-glow);
+            transform: scale(1.05);
+        }
 
-        /* Floating Nav */
-        .nav-dock {
+        /* The Premium Card */
+        .card {
+            background: var(--surface);
+            margin: 20px;
+            border-radius: var(--card-radius);
+            padding: 25px;
+            position: relative;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05);
+        }
+
+        .card.premium-glow {
+            border: 2px solid var(--accent);
+            background: linear-gradient(165deg, #ffffff 0%, #fffdf5 100%);
+        }
+
+        .card.premium-glow::before {
+            content: 'TOP CHOICE';
+            position: absolute;
+            top: 20px; right: 20px;
+            background: var(--accent);
+            color: #000;
+            font-size: 10px; font-weight: 900;
+            padding: 4px 12px; border-radius: 8px;
+        }
+
+        .shop-head { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
+        .shop-icon { 
+            width: 50px; height: 50px; 
+            background: #f1f5f9; border-radius: 15px; 
+            display: flex; align-items: center; justify-content: center; font-size: 24px; 
+        }
+
+        .shop-info h3 { margin: 0; font-size: 20px; color: var(--dark); font-weight: 800; }
+        .shop-info p { margin: 2px 0; font-size: 13px; color: var(--text-sub); font-weight: 600; }
+
+        .tag-row { display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap; }
+        .tag { font-size: 10px; font-weight: 800; padding: 5px 12px; border-radius: 8px; background: #f1f5f9; color: #475569; }
+        .tag-verified { background: #dcfce7; color: #15803d; }
+
+        /* Super Buttons */
+        .btn-container { display: flex; gap: 10px; margin-top: 20px; }
+        .main-btn {
+            flex: 2;
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 800;
+            text-align: center;
+            box-shadow: 0 8px 20px var(--primary-glow);
+        }
+
+        .share-btn {
+            flex: 1;
+            background: #f1f5f9;
+            color: var(--dark);
+            padding: 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        /* Floating Menu Dock */
+        .menu-dock {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(15px);
-            padding: 12px 20px;
-            border-radius: 24px;
+            bottom: 25px; left: 20px; right: 20px;
+            background: #0f172a;
+            padding: 15px 25px;
+            border-radius: 30px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             z-index: 1000;
         }
 
-        .nav-btn { color: #94a3b8; text-decoration: none; font-size: 10px; font-weight: 700; text-align: center; }
-        .nav-btn.active { color: white; }
-        .nav-btn i { font-size: 20px; display: block; margin-bottom: 4px; }
+        .menu-item { color: #94a3b8; text-decoration: none; font-size: 11px; font-weight: 700; text-align: center; }
+        .menu-item.active { color: white; }
+        .menu-item i { font-size: 22px; display: block; margin-bottom: 5px; }
 
-        .pulse { width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; box-shadow: 0 0 0 rgba(16, 185, 129, 0.4); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        .add-btn {
+            background: var(--primary);
+            color: white !important;
+            padding: 12px 25px;
+            border-radius: 20px;
+            margin-top: -10px;
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        /* Pulse Animation */
+        .live-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 10px var(--success); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
 
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>RIX RAEBARELI</h1>
-        <p>The Premium Industrial Network</p>
+        <h1><span>RIX</span> RAEBARELI</h1>
+        <p>Industrial Hub & Business Exchange</p>
     </div>
 
-    <div class="search-wrapper">
-        <input type="text" id="searchInput" placeholder="Find verified shops & services..." onkeyup="handleSearch()">
-    </div>
-
-    <div class="hero-banner">
-        <div class="hero-icon">📢</div>
-        <div class="hero-content">
-            <b>Industrial Concierge</b>
-            <span>Can't find a part? Let the RIX team find it for you.</span>
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search by tool, shop or area..." onkeyup="app.search()">
+            <button class="search-btn">Find</button>
         </div>
     </div>
 
-    <div class="section-label">Browse by Category</div>
-    <div class="scroll-row" id="catRow">
-        <div class="chip active" onclick="filterData('cat', 'All', this)">All Sectors</div>
-        <div class="chip" onclick="filterData('cat', 'Spare Parts', this)">Spare Parts</div>
-        <div class="chip" onclick="filterData('cat', 'Hardware', this)">Hardware</div>
-        <div class="chip" onclick="filterData('cat', 'Repairing', this)">Repairing</div>
-        <div class="chip" onclick="filterData('cat', 'Electrical', this)">Electrical</div>
+    <div class="scroll-row" id="catFilters">
+        </div>
+
+    <div id="shopFeed">
+        <div style="text-align:center; padding:50px; color:var(--text-sub);">
+            <div class="live-dot"></div> Loading Industrial Directory...
+        </div>
     </div>
 
-    <div class="section-label">Popular Areas</div>
-    <div class="scroll-row" id="areaRow">
-        <div class="chip active" onclick="filterData('area', 'All', this)">Everywhere</div>
-        <div class="chip" onclick="filterData('area', 'UPSIDA', this)">UPSIDA Site-II</div>
-        <div class="chip" onclick="filterData('area', 'Amawan', this)">Amawan Road</div>
-        <div class="chip" onclick="filterData('area', 'Civil', this)">Civil Lines</div>
-    </div>
-
-    <div id="listingContainer">
-        <div style="text-align:center; padding:50px; color:#94a3b8;">Initializing RIX Engine...</div>
-    </div>
-
-    <div class="nav-dock">
-        <a href="#" class="nav-btn active">🏠<br>Home</a>
-        <a href="https://wa.me/917317208851?text=Register%20Business" style="background:var(--primary); padding:10px 20px; border-radius:15px; color:white; text-decoration:none; font-weight:800; font-size:12px;">+ LIST SHOP</a>
-        <a href="https://wa.me/917317208851?text=Advertise" class="nav-btn">⭐<br>Premium</a>
+    <div class="menu-dock">
+        <a href="#" class="menu-item active">🏠<br>Explore</a>
+        <a href="https://wa.me/918146518503?text=Register%20Business" class="menu-item add-btn">LIST SHOP</a>
+        <a href="https://wa.me/918146518503?text=Request%20Specific%20Part" class="menu-item">🛠️<br>Request</a>
     </div>
 
     <script>
-        // Update this URL with your published CSV link
-        const CSV_SOURCE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
+        const CONFIG = {
+            CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv",
+            ADMIN_WA: "918146518503",
+            FOUNDER: "Shivansh Maurya"
+        };
 
-        let allShops = [];
-        let activeCat = 'All';
-        let activeArea = 'All';
-
-        async function initRIX() {
-            try {
-                const res = await fetch(CSV_SOURCE);
-                const text = await res.text();
-                const rows = text.split('\n').slice(1);
-                
-                allShops = rows.map(row => {
-                    const cols = row.split(',').map(c => c.trim().replace(/"/g, ""));
-                    return {
-                        name: cols[0],
-                        category: cols[1],
-                        location: cols[2],
-                        phone: cols[3],
-                        isPremium: cols[4] === "YES",
-                        isVerified: cols[5] === "YES"
-                    };
-                }).filter(s => s.name);
-
-                renderShops(allShops);
-            } catch (e) {
-                document.getElementById('listingContainer').innerHTML = "<p style='text-align:center'>Network Error. Check Connection.</p>";
-            }
-        }
-
-        function renderShops(data) {
-            const container = document.getElementById('listingContainer');
-            // Sort to keep Premium at top
-            data.sort((a, b) => b.isPremium - a.isPremium);
-            
-            container.innerHTML = data.map(shop => `
-                <div class="card ${shop.isPremium ? 'premium' : ''}" 
-                     data-cat="${shop.category}" 
-                     data-area="${shop.location}">
-                    <div class="badge-row">
-                        ${shop.isVerified ? '<span class="badge badge-verified">✓ Verified by RIX</span>' : ''}
-                        <span class="badge" style="background:#f1f5f9; color:#475569;"><span class="pulse"></span> Active Now</span>
-                    </div>
-                    <h3 class="shop-title">${shop.name} ${shop.isPremium ? '💎' : ''}</h3>
-                    <div class="shop-meta">📂 ${shop.category}</div>
-                    <div class="shop-meta">📍 ${shop.location}</div>
+        const app = {
+            data: [],
+            async init() {
+                try {
+                    const response = await fetch(CONFIG.CSV);
+                    const text = await response.text();
+                    const rows = text.split('\n').slice(1);
                     
-                    <div class="action-row">
-                        <a href="tel:${shop.phone}" class="btn-luxury btn-primary">📞 Call Supplier</a>
-                        <a href="https://wa.me/917317208851?text=Inquiry%20for%20${shop.name}" class="btn-luxury btn-secondary">💬 Chat</a>
+                    this.data = rows.map(row => {
+                        const col = row.split(',').map(c => c.trim().replace(/"/g, ""));
+                        return {
+                            name: col[0],
+                            cat: col[1],
+                            area: col[2],
+                            tel: col[3],
+                            isPremium: col[4] === "YES",
+                            isVerified: col[5] === "YES"
+                        };
+                    }).filter(s => s.name);
+
+                    this.renderCategories();
+                    this.renderFeed(this.data);
+                } catch (e) {
+                    console.error("Load Error", e);
+                }
+            },
+
+            renderCategories() {
+                const cats = ['All', ...new Set(this.data.map(s => s.cat))];
+                const container = document.getElementById('catFilters');
+                container.innerHTML = cats.map(c => `
+                    <div class="chip ${c === 'All' ? 'active' : ''}" onclick="app.filter('${c}', this)">${c}</div>
+                `).join('');
+            },
+
+            renderFeed(list) {
+                const feed = document.getElementById('shopFeed');
+                // Sorting: Premium first
+                list.sort((a, b) => b.isPremium - a.isPremium);
+
+                feed.innerHTML = list.map(shop => `
+                    <div class="card ${shop.isPremium ? 'premium-glow' : ''}">
+                        <div class="shop-head">
+                            <div class="shop-icon">${this.getIcon(shop.cat)}</div>
+                            <div class="shop-info">
+                                <h3>${shop.name}</h3>
+                                <p>📍 ${shop.area}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tag-row">
+                            <span class="tag">#${shop.cat}</span>
+                            ${shop.isVerified ? '<span class="tag tag-verified">✓ RIX VERIFIED</span>' : ''}
+                            <span class="tag"><div class="live-dot"></div> AVAILABLE</span>
+                        </div>
+
+                        <div class="btn-container">
+                            <a href="tel:${shop.tel}" class="main-btn">CALL NOW</a>
+                            <a href="https://wa.me/${CONFIG.ADMIN_WA}?text=Share%20Contact%20of%20${shop.name}" class="share-btn">📤</a>
+                        </div>
                     </div>
-                </div>
-            `).join('');
-        }
+                `).join('');
+            },
 
-        function filterData(type, value, el) {
-            if (type === 'cat') activeCat = value;
-            if (type === 'area') activeArea = value;
+            getIcon(cat) {
+                const icons = { 'Spare Parts': '⚙️', 'Hardware': '🛠️', 'Repairing': '👨‍🔧', 'Electrical': '⚡' };
+                return icons[cat] || '🏢';
+            },
 
-            // Update UI
-            el.parentElement.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
+            filter(cat, el) {
+                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                el.classList.add('active');
+                const filtered = cat === 'All' ? this.data : this.data.filter(s => s.cat === cat);
+                this.renderFeed(filtered);
+            },
 
-            const filtered = allShops.filter(s => {
-                const catMatch = activeCat === 'All' || s.category.includes(activeCat);
-                const areaMatch = activeArea === 'All' || s.location.includes(activeArea);
-                return catMatch && areaMatch;
-            });
+            search() {
+                const query = document.getElementById('searchInput').value.toLowerCase();
+                const filtered = this.data.filter(s => 
+                    s.name.toLowerCase().includes(query) || 
+                    s.cat.toLowerCase().includes(query) || 
+                    s.area.toLowerCase().includes(query)
+                );
+                this.renderFeed(filtered);
+            }
+        };
 
-            renderShops(filtered);
-        }
-
-        function handleSearch() {
-            const term = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allShops.filter(s => 
-                s.name.toLowerCase().includes(term) || 
-                s.category.toLowerCase().includes(term) ||
-                s.location.toLowerCase().includes(term)
-            );
-            renderShops(filtered);
-        }
-
-        initRIX();
+        app.init();
     </script>
 </body>
 </html>
