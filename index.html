@@ -16,17 +16,17 @@
             --body-bg: #f1f5f9;
             --text-main: #1e293b;
             --text-sub: #64748b;
-            --glass: rgba(255, 255, 255, 0.85);
+            --glass: rgba(15, 23, 42, 0.9);
             --card-radius: 28px;
         }
 
-        * { transition: all 0.25s ease-in-out; font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
+        * { transition: all 0.25s ease-in-out; font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; scroll-behavior: smooth; }
 
         body {
             margin: 0;
             background: var(--body-bg);
             color: var(--text-main);
-            padding-bottom: 110px;
+            padding-bottom: 120px;
             overflow-x: hidden;
         }
 
@@ -41,231 +41,135 @@
             position: relative;
         }
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            opacity: 0.1;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 36px;
-            font-weight: 800;
-            letter-spacing: -1.5px;
-            text-transform: uppercase;
-        }
-
+        .header h1 { margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -1.5px; text-transform: uppercase; }
         .header span {
-            display: inline-block;
             background: linear-gradient(90deg, var(--accent), #fef08a);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
         }
 
         /* Advanced Search Bar */
-        .search-container {
-            margin: -40px 20px 0;
-            position: relative;
-            z-index: 100;
-        }
-
+        .search-container { margin: -40px 20px 0; position: relative; z-index: 100; }
         .search-box {
-            display: flex;
-            align-items: center;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            padding: 10px 10px 10px 25px;
+            display: flex; align-items: center;
+            background: white;
+            padding: 8px 8px 8px 20px;
             border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            border: 1px solid rgba(255,255,255,0.4);
-        }
-
-        #searchInput {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 12px 0;
-            font-size: 16px;
-            font-weight: 600;
-            outline: none;
-            color: var(--dark);
-        }
-
-        .search-btn {
-            background: var(--dark);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 18px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        /* Dynamic Stats Chips */
-        .scroll-row {
-            display: flex;
-            overflow-x: auto;
-            padding: 15px 20px;
-            gap: 12px;
-            scrollbar-width: none;
-        }
-        .scroll-row::-webkit-scrollbar { display: none; }
-
-        .chip {
-            background: var(--surface);
-            padding: 12px 24px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 700;
-            white-space: nowrap;
-            color: var(--text-sub);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-
-        .chip.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary-glow);
-            transform: scale(1.05);
-        }
-
-        /* The Premium Card */
-        .card {
-            background: var(--surface);
-            margin: 20px;
-            border-radius: var(--card-radius);
-            padding: 25px;
-            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.05);
         }
 
+        #searchInput { flex: 1; border: none; background: transparent; padding: 12px 0; font-size: 16px; outline: none; }
+
+        /* Chips & Filters */
+        .scroll-row { display: flex; overflow-x: auto; padding: 15px 20px; gap: 12px; scrollbar-width: none; }
+        .scroll-row::-webkit-scrollbar { display: none; }
+        .chip {
+            background: white; padding: 12px 22px; border-radius: 20px;
+            font-size: 13px; font-weight: 700; white-space: nowrap;
+            color: var(--text-sub); box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            cursor: pointer; border: 2px solid transparent;
+        }
+        .chip.active { background: var(--primary); color: white; transform: scale(1.05); }
+
+        /* Shop Cards */
+        .card {
+            background: white; margin: 20px; border-radius: var(--card-radius);
+            padding: 25px; position: relative; border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+        }
         .card.premium-glow {
             border: 2px solid var(--accent);
             background: linear-gradient(165deg, #ffffff 0%, #fffdf5 100%);
         }
-
         .card.premium-glow::before {
-            content: 'TOP CHOICE';
-            position: absolute;
-            top: 20px; right: 20px;
-            background: var(--accent);
-            color: #000;
-            font-size: 10px; font-weight: 900;
-            padding: 4px 12px; border-radius: 8px;
+            content: 'TOP CHOICE'; position: absolute; top: 15px; right: 15px;
+            background: var(--accent); color: #000; font-size: 9px; font-weight: 900;
+            padding: 4px 10px; border-radius: 6px;
         }
 
-        .shop-head { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
-        .shop-icon { 
-            width: 50px; height: 50px; 
-            background: #f1f5f9; border-radius: 15px; 
-            display: flex; align-items: center; justify-content: center; font-size: 24px; 
-        }
+        .shop-head { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .shop-icon { width: 50px; height: 50px; background: #f1f5f9; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .shop-info h3 { margin: 0; font-size: 19px; font-weight: 800; }
+        .shop-info p { margin: 2px 0; font-size: 13px; color: var(--text-sub); }
 
-        .shop-info h3 { margin: 0; font-size: 20px; color: var(--dark); font-weight: 800; }
-        .shop-info p { margin: 2px 0; font-size: 13px; color: var(--text-sub); font-weight: 600; }
-
-        .tag-row { display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap; }
-        .tag { font-size: 10px; font-weight: 800; padding: 5px 12px; border-radius: 8px; background: #f1f5f9; color: #475569; }
+        .tag-row { display: flex; gap: 6px; margin: 15px 0; }
+        .tag { font-size: 10px; font-weight: 800; padding: 5px 10px; border-radius: 6px; background: #f1f5f9; color: #475569; }
         .tag-verified { background: #dcfce7; color: #15803d; }
 
-        /* Super Buttons */
         .btn-container { display: flex; gap: 10px; margin-top: 20px; }
         .main-btn {
-            flex: 2;
-            background: var(--primary);
-            color: white;
-            padding: 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 800;
-            text-align: center;
-            box-shadow: 0 8px 20px var(--primary-glow);
+            flex: 1; background: var(--primary); color: white; padding: 16px;
+            border-radius: 18px; text-decoration: none; font-weight: 800; text-align: center;
+            box-shadow: 0 5px 15px var(--primary-glow);
         }
+        .share-btn { background: #f1f5f9; color: var(--dark); padding: 16px; border-radius: 18px; text-decoration: none; width: 60px; text-align: center; }
 
-        .share-btn {
-            flex: 1;
-            background: #f1f5f9;
-            color: var(--dark);
-            padding: 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            text-align: center;
-            font-size: 18px;
-        }
-
-        /* Floating Menu Dock */
+        /* FIX: Floating Navigation Dock */
         .menu-dock {
-            position: fixed;
-            bottom: 25px; left: 20px; right: 20px;
-            background: #0f172a;
-            padding: 15px 25px;
-            border-radius: 30px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            z-index: 1000;
+            position: fixed; bottom: 25px; left: 20px; right: 20px;
+            background: var(--glass); backdrop-filter: blur(15px);
+            padding: 12px 10px; border-radius: 30px;
+            display: flex; justify-content: space-around; align-items: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 1000;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-
-        .menu-item { color: #94a3b8; text-decoration: none; font-size: 11px; font-weight: 700; text-align: center; }
+        .menu-item { color: #94a3b8; text-decoration: none; font-size: 10px; font-weight: 700; text-align: center; flex: 1; }
         .menu-item.active { color: white; }
-        .menu-item i { font-size: 22px; display: block; margin-bottom: 5px; }
-
+        .menu-item span.icon { font-size: 20px; display: block; margin-bottom: 4px; }
+        
+        .add-btn-wrapper { flex: 1.5; }
         .add-btn {
-            background: var(--primary);
-            color: white !important;
-            padding: 12px 25px;
-            border-radius: 20px;
-            margin-top: -10px;
+            background: var(--primary); color: white !important;
+            padding: 12px 0; border-radius: 20px; display: block;
             box-shadow: 0 10px 20px var(--primary-glow);
+            transform: translateY(-5px);
         }
 
-        /* Pulse Animation */
-        .live-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 10px var(--success); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
-
+        .live-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; margin-right: 5px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <div class="header">
+    <div class="header" id="top">
         <h1><span>RIX</span> RAEBARELI</h1>
         <p>Industrial Hub & Business Exchange</p>
     </div>
 
     <div class="search-container">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search by tool, shop or area..." onkeyup="app.search()">
-            <button class="search-btn">Find</button>
+            <input type="text" id="searchInput" placeholder="Search tools, hardware, areas..." onkeyup="app.search()">
+            <span style="padding-right:15px; opacity: 0.5;">🔍</span>
         </div>
     </div>
 
-    <div class="scroll-row" id="catFilters">
-        </div>
+    <div class="scroll-row" id="catFilters"></div>
 
     <div id="shopFeed">
         <div style="text-align:center; padding:50px; color:var(--text-sub);">
-            <div class="live-dot"></div> Loading Industrial Directory...
+            <div class="live-dot"></div> Loading RIX Engine...
         </div>
     </div>
 
     <div class="menu-dock">
-        <a href="#" class="menu-item active">🏠<br>Explore</a>
-        <a href="https://wa.me/918146518503?text=Register%20Business" class="menu-item add-btn">LIST SHOP</a>
-        <a href="https://wa.me/918146518503?text=Request%20Specific%20Part" class="menu-item">🛠️<br>Request</a>
+        <a href="javascript:void(0)" class="menu-item active" onclick="app.explore()">
+            <span class="icon">🏠</span>Explore
+        </a>
+        <div class="add-btn-wrapper">
+            <a href="https://wa.me/918146518503?text=I%20want%20to%20register%20my%20business%20on%20RIX" class="menu-item add-btn">
+                LIST SHOP
+            </a>
+        </div>
+        <a href="https://wa.me/918146518503?text=Hello%20Admin,%20I%20am%20looking%20for%20a%20specific%20industrial%20part/service:%20" class="menu-item">
+            <span class="icon">🛠️</span>Request
+        </a>
     </div>
 
     <script>
         const CONFIG = {
             CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv",
-            ADMIN_WA: "918146518503",
-            FOUNDER: "Shivansh Maurya"
+            ADMIN_WA: "918146518503"
         };
 
         const app = {
@@ -280,8 +184,8 @@
                         const col = row.split(',').map(c => c.trim().replace(/"/g, ""));
                         return {
                             name: col[0],
-                            cat: col[1],
-                            area: col[2],
+                            cat: col[1] || 'General',
+                            area: col[2] || 'Raebareli',
                             tel: col[3],
                             isPremium: col[4] === "YES",
                             isVerified: col[5] === "YES"
@@ -291,7 +195,7 @@
                     this.renderCategories();
                     this.renderFeed(this.data);
                 } catch (e) {
-                    console.error("Load Error", e);
+                    document.getElementById('shopFeed').innerHTML = "<p style='text-align:center'>Connection Error. Refresh.</p>";
                 }
             },
 
@@ -305,28 +209,29 @@
 
             renderFeed(list) {
                 const feed = document.getElementById('shopFeed');
-                // Sorting: Premium first
                 list.sort((a, b) => b.isPremium - a.isPremium);
+
+                if(list.length === 0) {
+                    feed.innerHTML = "<p style='text-align:center; padding:40px; color:#94a3b8;'>No shops found in this category.</p>";
+                    return;
+                }
 
                 feed.innerHTML = list.map(shop => `
                     <div class="card ${shop.isPremium ? 'premium-glow' : ''}">
                         <div class="shop-head">
                             <div class="shop-icon">${this.getIcon(shop.cat)}</div>
                             <div class="shop-info">
-                                <h3>${shop.name}</h3>
+                                <h3>${shop.name} ${shop.isPremium ? '💎' : ''}</h3>
                                 <p>📍 ${shop.area}</p>
                             </div>
                         </div>
-                        
                         <div class="tag-row">
                             <span class="tag">#${shop.cat}</span>
-                            ${shop.isVerified ? '<span class="tag tag-verified">✓ RIX VERIFIED</span>' : ''}
-                            <span class="tag"><div class="live-dot"></div> AVAILABLE</span>
+                            ${shop.isVerified ? '<span class="tag tag-verified">✓ VERIFIED</span>' : ''}
                         </div>
-
                         <div class="btn-container">
                             <a href="tel:${shop.tel}" class="main-btn">CALL NOW</a>
-                            <a href="https://wa.me/${CONFIG.ADMIN_WA}?text=Share%20Contact%20of%20${shop.name}" class="share-btn">📤</a>
+                            <a href="https://wa.me/${CONFIG.ADMIN_WA}?text=I%20found%20${shop.name}%20on%20RIX.%20Please%20share%20details." class="share-btn">💬</a>
                         </div>
                     </div>
                 `).join('');
@@ -352,6 +257,13 @@
                     s.area.toLowerCase().includes(query)
                 );
                 this.renderFeed(filtered);
+            },
+
+            // FIX: Function for Explore Button
+            explore() {
+                window.scrollTo(0, 0);
+                document.getElementById('searchInput').value = '';
+                this.filter('All', document.querySelector('.chip'));
             }
         };
 
