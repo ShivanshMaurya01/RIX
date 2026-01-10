@@ -65,11 +65,11 @@ input, select { width: 100%; padding: 15px; border-radius: 15px; border: 1px sol
 .tag { font-size: 10px; padding: 5px 10px; border-radius: 6px; background: rgba(255,255,255,0.05); color: var(--muted); font-weight: 700; border: 1px solid var(--border); }
 
 .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.btn { padding: 14px; border-radius: 14px; text-align: center; text-decoration: none; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; }
+.btn { padding: 14px; border-radius: 14px; text-align: center; text-decoration: none; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
 .btn-call { background: var(--card); color: white; border: 1px solid var(--border); }
 .btn-wa { background: var(--primary); color: white; }
 
-/* Admin dashboard (Hidden by default) */
+/* Admin dashboard */
 #admin-box { display: none; background: #000; padding: 20px; border-bottom: 2px solid var(--primary); }
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .stat-item { background: #111; padding: 15px; border-radius: 15px; }
@@ -92,8 +92,8 @@ nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(1
 <div id="admin-box">
   <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><b style="color:var(--primary)">ADMIN COMMAND</b> <button onclick="exitAdm()" style="background:#333;color:#fff;border:none;padding:5px;border-radius:5px">X</button></div>
   <div class="stat-grid">
-    <div class="stat-item"><small>Total</small><div id="ad-tot">0</div></div>
-    <div class="stat-item"><small>Revenue</small><div id="ad-rev" style="color:var(--green)">₹0</div></div>
+    <div class="stat-item"><small>Total Units</small><div id="ad-tot">0</div></div>
+    <div class="stat-item"><small>Total Rev</small><div id="ad-rev" style="color:var(--green)">₹0</div></div>
   </div>
 </div>
 
@@ -120,7 +120,7 @@ nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(1
 
 <script>
 const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
-const HASH = "86493664790089e9d6d87f7390ba038c82306716a50682701df93f0b2403251e"; // cutipie of ninth class
+const HASH = "0608679d63c5008064436894080183e8784918e7e17042079090b8216c55209c"; // Password: rix786
 
 let DB = [], VIEW = [], isAdm = false;
 
@@ -163,10 +163,10 @@ function render() {
         </div>
         <div class="actions">
           <a href="tel:${x["Phone No."]}" class="btn btn-call">CALL</a>
-          <a href="https://wa.me/91${x["Phone No."].replace(/\D/g,'')}" class="btn btn-wa">WHATSAPP</a>
+          <a href="https://wa.me/91${String(x["Phone No."]).replace(/\D/g,'')}" class="btn btn-wa">WHATSAPP</a>
         </div>
-        ${isAdm ? `<div style="font-size:10px; color:var(--muted); margin-top:10px; border-top:1px dashed #333; padding-top:5px;">
-          Agent: ${x.AgentID} | Commission: ₹${x.AgentCommission} | Status: ${x.PaymentStatus}
+        ${isAdm ? `<div style="font-size:10px; color:var(--muted); margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
+          Agent: ${x.AgentID} | Comm: ₹${x.AgentCommission} | Status: ${x.PaymentStatus}
         </div>` : ''}
       </div>`;
   }).join('');
@@ -185,9 +185,9 @@ function doFilter(c) {
 
 async function doLogin() {
   if(isAdm) return;
-  const p = prompt("ACCESS CODE:");
+  const p = prompt("ENTER RIX ADMIN KEY:");
   if(!p) return;
-  const msg = new TextEncoder().encode(p);
+  const msg = new TextEncoder().encode(p.trim().toLowerCase());
   const hashB = await crypto.subtle.digest('SHA-256', msg);
   const hex = Array.from(new Uint8Array(hashB)).map(b => b.toString(16).padStart(2,'0')).join('');
   if(hex === HASH) {
@@ -203,8 +203,8 @@ async function doLogin() {
 function exitAdm() { isAdm = false; document.getElementById('admin-box').style.display = 'none'; render(); }
 
 function doShare() {
-  if(navigator.share) navigator.share({title:'RIX Network', url: location.href});
-  else alert(location.href);
+  if(navigator.share) navigator.share({title:'RIX Network', url: 'https://shivanshmaurya01.github.io/RIX/'});
+  else alert('https://shivanshmaurya01.github.io/RIX/');
 }
 
 load();
