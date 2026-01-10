@@ -1,525 +1,430 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RIX | Raebareli Industrial Authority</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RIX — Raebareli Industrial Network</title>
+<meta name="description" content="Independent Industrial Business Network — controlled by Google Sheet" />
+<meta name="theme-color" content="#020617" />
 
-    <meta name="description" content="India’s Independent Industrial Business Network">
-    <meta name="theme-color" content="#020617">
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+<!-- PapaParse (robust CSV) -->
+<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 
-    <style>
-        /* SECTION 1: DESIGN SYSTEM */
-        :root {
-            --bg: #020617;
-            --surface: #0f172a;
-            --surface-light: #1e293b;
-            --border: rgba(255, 255, 255, 0.08);
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.3);
-            --gold: #fbbf24;
-            --green: #10b981;
-            --red: #ef4444;
-            --glass: rgba(15, 23, 42, 0.8);
-            --radius-xl: 32px;
-            --radius-m: 16px;
-            --shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
+<style>
+:root{
+  --bg:#020617; --surface:#0f172a; --surface-2:#1e293b;
+  --border:rgba(255,255,255,.08); --text:#f8fafc; --muted:#94a3b8;
+  --primary:#3b82f6; --gold:#fbbf24; --green:#10b981; --danger:#ef4444;
+  --glass:rgba(15,23,42,.8); --radius:18px; --shadow:0 20px 40px rgba(0,0,0,.5);
+  --max-width:1100px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,-apple-system; background:var(--bg); color:var(--text);
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; padding-bottom:140px;
+}
+.container{max-width:var(--max-width);margin:0 auto}
 
-        /* SECTION 2: GLOBAL ARCHITECTURE */
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding-bottom: 140px;
-            overflow-x: hidden;
-        }
+/* Header */
+.header{
+  padding:90px 20px 110px; text-align:center; border-bottom:1px solid var(--border);
+  background:radial-gradient(circle at top right,#1e3a8a,transparent 60%), linear-gradient(180deg,#020617,#0f172a);
+}
+.header .badge{display:inline-block;background:rgba(59,130,246,.08); color:var(--primary); padding:8px 18px; border-radius:999px; font-weight:800; font-size:12px; letter-spacing:2px}
+.header h1{font-size:54px;margin-top:14px;font-weight:800}
+.header p{color:var(--muted);margin-top:10px;font-weight:700;letter-spacing:3px;font-size:12px}
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 20px;margin-top:-50px}
+@media(min-width:800px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;box-shadow:var(--shadow)}
+.stat strong{display:block;font-family:'JetBrains Mono',monospace;font-size:28px}
 
-        /* SECTION 3: HEADER & BRANDING */
-        header {
-            padding: 100px 24px 120px;
-            background: radial-gradient(circle at top right, #1e3a8a, transparent 70%), 
-                        linear-gradient(to bottom, #020617, #0f172a);
-            text-align: center;
-            border-bottom: 1px solid var(--border);
-            position: relative;
-        }
+/* Controls */
+.controls{padding:28px 20px 6px}
+.search{display:flex;gap:12px;max-width:var(--max-width);margin:0 auto}
+.search input{flex:1;padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:600}
+.btn{padding:12px 14px;border-radius:12px;background:var(--primary);color:#fff;font-weight:800;border:none;cursor:pointer}
+.small{padding:10px 12px;font-size:13px}
+.filters{display:flex;gap:10px;overflow:auto;padding:14px 20px;max-width:var(--max-width);margin:0 auto}
+.chip{padding:10px 16px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
+.chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-        header .badge {
-            display: inline-block;
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary);
-            font-weight: 800;
-            font-size: 10px;
-            padding: 8px 16px;
-            border-radius: 100px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-        }
+/* List */
+#list{padding:20px;display:grid;gap:20px;max-width:var(--max-width);margin:0 auto}
+@media(min-width:900px){#list{grid-template-columns:repeat(2,1fr)}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:26px;position:relative;overflow:hidden;transition:transform .25s}
+.card:hover{transform:translateY(-6px)}
+.card.premium{border:2px solid var(--gold);background:linear-gradient(145deg,#1e293b,#020617)}
+.card .tag-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.tag{font-size:11px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--muted);font-weight:800}
+.tag.verified{color:var(--green);border-color:var(--green);background:rgba(16,185,129,.06)}
+.tag.expired{color:var(--danger);border-color:var(--danger);background:rgba(239,68,68,.06)}
+.title{font-size:22px;font-weight:800;display:flex;align-items:center;gap:10px}
+.loc{color:var(--muted);font-size:13px;margin-top:6px}
+.rating{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.18);padding:12px;border-radius:12px;margin-top:12px}
+.stars{color:var(--gold);font-weight:900}
+.actions{display:grid;grid-template-columns:1fr 64px;gap:10px;margin-top:14px}
+.call{background:var(--primary);color:#fff;padding:12px;border-radius:12px;text-align:center;font-weight:800}
+.wa{background:#25d366;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff}
 
-        header h1 {
-            font-family: 'Bricolage Grotesk', sans-serif;
-            font-size: 68px;
-            font-weight: 800;
-            letter-spacing: -4px;
-            line-height: 0.8;
-        }
+/* Admin small */
+.admin-box{margin-top:14px;padding:12px;border-radius:10px;background:rgba(0,0,0,.25);border:1px dashed var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.hidden{display:none}
 
-        header p {
-            color: var(--muted);
-            margin-top: 15px;
-            font-weight: 800;
-            letter-spacing: 4px;
-            font-size: 11px;
-            text-transform: uppercase;
-        }
-
-        /* SECTION 4: LIVE ANALYTICS */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 0 20px;
-            margin-top: -60px;
-            position: relative;
-            z-index: 10;
-        }
-
-        @media(min-width: 768px) { .stats { grid-template-columns: repeat(4, 1fr); } }
-
-        .stat {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-m);
-            padding: 24px 15px;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-
-        .stat strong {
-            display: block;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 32px;
-            color: var(--text);
-            line-height: 1;
-        }
-
-        .stat span {
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* SECTION 5: CONTROL PANEL */
-        .controls { padding: 40px 20px 20px; }
-        
-        .search-box {
-            position: relative;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            transition: 0.3s;
-        }
-
-        .search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
-
-        .search-box input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: white;
-            padding: 15px;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .search-btn {
-            width: 50px; height: 50px;
-            background: var(--primary);
-            border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .filters {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            margin-top: 20px;
-            padding-bottom: 10px;
-            scrollbar-width: none;
-        }
-
-        .filters::-webkit-scrollbar { display: none; }
-
-        .chip {
-            padding: 12px 24px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 100px;
-            font-size: 13px;
-            font-weight: 700;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: 0.3s;
-            color: var(--muted);
-        }
-
-        .chip.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 10px 20px var(--primary-glow);
-        }
-
-        /* SECTION 6: THE DIRECTORY LIST */
-        #list { padding: 20px; display: grid; gap: 24px; }
-        
-        @media(min-width: 900px) { #list { grid-template-columns: repeat(2, 1fr); } }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            animation: fadeIn 0.6s ease-out backwards;
-            transition: 0.4s;
-        }
-
-        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
-
-        .card.premium {
-            border: 2px solid var(--gold);
-            background: linear-gradient(145deg, #1e293b, #020617);
-        }
-
-        .card.premium::before {
-            content: "DIAMOND PARTNER";
-            position: absolute;
-            top: 20px; right: -35px;
-            background: var(--gold);
-            color: #000;
-            font-size: 9px;
-            font-weight: 900;
-            padding: 6px 45px;
-            transform: rotate(45deg);
-        }
-
-        .title {
-            font-size: 26px;
-            font-weight: 800;
-            color: var(--text);
-            letter-spacing: -0.5px;
-            margin-bottom: 4px;
-            display: flex; align-items: center; gap: 10px;
-        }
-
-        .loc { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
-
-        .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 25px; }
-        
-        .tag {
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding: 8px 14px;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            color: var(--muted);
-        }
-
-        .verified { color: var(--green); border-color: var(--green); background: rgba(16, 185, 129, 0.05); }
-        .expired { color: var(--red); border-color: var(--red); background: rgba(239, 68, 68, 0.05); }
-
-        .rating-box {
-            background: rgba(0,0,0,0.2);
-            padding: 15px;
-            border-radius: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .stars { color: var(--gold); font-weight: 800; font-size: 14px; }
-        .reviews { font-size: 11px; font-weight: 800; color: var(--muted); }
-
-        /* SECTION 7: ACTIONS */
-        .actions { display: grid; grid-template-columns: 1fr 65px; gap: 12px; }
-        
-        .call {
-            background: var(--primary);
-            color: white;
-            padding: 18px;
-            border-radius: 20px;
-            text-align: center;
-            font-weight: 800;
-            text-decoration: none;
-            font-size: 15px;
-            transition: 0.3s;
-        }
-
-        .call:active { transform: scale(0.95); }
-
-        .wa {
-            background: #22c55e;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            text-decoration: none;
-        }
-
-        /* SECTION 8: ADMIN DASHBOARD */
-        .admin {
-            margin-top: 25px;
-            padding: 15px;
-            background: rgba(0,0,0,0.3);
-            border: 1px dashed var(--border);
-            border-radius: 15px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        .admin span { color: var(--primary); font-weight: 800; }
-
-        .hidden { display: none !important; }
-
-        /* SECTION 9: NAVIGATION DOCK */
-        nav {
-            position: fixed;
-            bottom: 30px; left: 20px; right: 20px;
-            background: var(--glass);
-            backdrop-filter: blur(30px);
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-        }
-
-        nav a { font-size: 11px; font-weight: 800; color: var(--muted); text-decoration: none; text-align: center; }
-        nav a i { display: block; font-size: 22px; font-style: normal; margin-bottom: 4px; }
-        nav a.active { color: var(--primary); }
-
-        nav .add {
-            background: var(--primary);
-            width: 70px; height: 70px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 35px; color: #fff;
-            margin-top: -60px;
-            border: 8px solid var(--bg);
-            box-shadow: 0 10px 20px var(--primary-glow);
-        }
-
-        /* LOADING SKELETON */
-        .loader { height: 200px; background: var(--surface); border-radius: var(--radius-xl); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-    </style>
+/* Nav */
+nav{position:fixed;left:20px;right:20px;bottom:24px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:40px;padding:12px 18px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 30px 60px rgba(0,0,0,.6)}
+nav a{color:var(--muted);font-weight:800;font-size:12px;text-decoration:none}
+.add-btn{background:var(--primary);width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;margin-top:-36px;border:8px solid var(--bg)}
+.loader{height:180px;background:linear-gradient(90deg,#0f172a 25%,#1e293b 50%,#0f172a 75%);border-radius:22px;animation:shimmer 1.8s linear infinite;background-size:1200px 100%}
+.footer-note{max-width:var(--max-width);margin:34px auto;color:var(--muted);font-size:12px;padding:0 20px;text-align:center}
+</style>
 </head>
-
 <body>
+  <div class="container header">
+    <div class="badge">Independent Hub 2026</div>
+    <h1>RIX</h1>
+    <p>Raebareli Industrial Network</p>
+  </div>
 
-    <header>
-        <div class="badge">Independent Hub 2026</div>
-        <h1>RIX</h1>
-        <p>Industrial Business Network</p>
-    </header>
+  <div class="container stats" aria-hidden="false">
+    <div class="stat"><strong id="totalCount">0</strong><span>Total Units</span></div>
+    <div class="stat"><strong id="verifiedCount">0</strong><span>Verified</span></div>
+    <div class="stat"><strong id="premiumCount">0</strong><span>Premium (paid)</span></div>
+    <div class="stat"><strong id="cityCount">0</strong><span>Hubs/Cities</span></div>
+  </div>
 
-    <section class="stats">
-        <div class="stat"><strong id="st">0</strong><span>Total Units</span></div>
-        <div class="stat"><strong id="sv" style="color:var(--green)">0</strong><span>Verified</span></div>
-        <div class="stat"><strong id="sp" style="color:var(--gold)">0</strong><span>Premium</span></div>
-        <div class="stat"><strong id="sc">0</strong><span>Hubs/Cities</span></div>
-    </section>
+  <div class="controls">
+    <div class="search container" style="align-items:center;margin-bottom:6px">
+      <input id="searchInput" placeholder="Search shop, category, industry, or city..." onkeyup="searchEngine(this.value)" />
+      <button class="btn small" id="refreshBtn" title="Refresh data">Refresh</button>
+      <button class="btn small" id="adminToggle" title="Show admin (#admin)">Admin</button>
+    </div>
+    <div class="filters" id="cityFilters"></div>
+  </div>
 
-    <section class="controls">
-        <div class="search-box">
-            <input id="searchInput" placeholder="Search factory, tools, city..." onkeyup="searchEngine(this.value)">
-            <div class="search-btn">🔍</div>
+  <main id="list" class="container">
+    <div class="loader"></div><div class="loader"></div><div class="loader"></div>
+  </main>
+
+  <div class="container footer-note">Tip: Edit the Google Sheet to update listings. Use <code>#admin</code> or <code>?admin=1</code> in the URL to view admin info (agent & payments).</div>
+
+  <nav>
+    <a href="#" class="active">🏠 Directory</a>
+    <a class="add-btn" href="https://wa.me/918146518503?text=Add%20Business%20To%20RIX">＋</a>
+    <a href="https://wa.me/918146518503?text=RIX%20Support">🛡️ Support</a>
+  </nav>
+
+<script>
+/* ========== CONFIG ========== */
+/* Replace this with your published Google Sheet CSV URL */
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
+
+/* Admin reveal: #admin OR ?admin=1 */
+const isAdmin = (() => {
+  try {
+    const h = location.hash.replace('#','');
+    const p = new URLSearchParams(location.search);
+    return (h === 'admin') || (p.get('admin') === '1');
+  } catch(e){ return false; }
+})();
+
+/* State */
+let db = [], view = [], currentCity = 'All';
+
+/* Utility: safe access */
+const s = v => (v || "").toString().trim();
+const num = v => (v === undefined || v === null || v === '') ? 0 : Number(v);
+
+/* sanitize phone digits */
+function sanitizePhone(p) {
+  if(!p) return "";
+  const digits = p.toString().replace(/\D/g,'');
+  // ensure 10-digit fallback
+  if(digits.length === 10) return digits;
+  if(digits.length > 10 && digits.startsWith('91')) return digits.slice(-10);
+  return digits;
+}
+
+/* create dynamic manifest so PWA install works without extra file */
+(function makeManifest(){
+  const manifest = {
+    "name":"RIX — Industrial Directory",
+    "short_name":"RIX",
+    "start_url":".",
+    "display":"standalone",
+    "background_color":"#020617",
+    "theme_color":"#020617",
+    "icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%233b82f6'/%3E%3Ctext x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='60' font-family='Arial' fill='white'>R</text%3E%3C/svg%3E","sizes":"120x120","type":"image/svg+xml"}]
+  };
+  const blob = new Blob([JSON.stringify(manifest)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('link');
+  link.rel = 'manifest'; link.href = url;
+  document.head.appendChild(link);
+})();
+
+/* ========== LOAD DATA (PapaParse) ========== */
+function fetchAndParse() {
+  return new Promise((resolve, reject) => {
+    Papa.parse(SHEET_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: results => resolve(results.data),
+      error: err => reject(err)
+    });
+  });
+}
+
+/* bootstrap */
+async function boot(tryCached=true){
+  try {
+    const data = await fetchAndParse();
+    // normalize: keep only rows with ShopID or Shop name
+    db = data.filter(r => s(r.ShopID) || s(r["Shop name"]));
+    localStorage.setItem('rix_db_v1', JSON.stringify(db));
+    postBoot();
+    console.log('RIX: data loaded from sheet', db.length, new Date().toISOString());
+  } catch (err) {
+    console.warn('RIX: fetch failed, loading cache', err);
+    const cache = localStorage.getItem('rix_db_v1');
+    db = cache ? JSON.parse(cache) : [];
+    postBoot();
+  }
+}
+
+/* call boot now */
+boot();
+
+/* manual refresh */
+document.getElementById('refreshBtn').addEventListener('click', ()=>{
+  document.getElementById('refreshBtn').disabled = true;
+  document.getElementById('refreshBtn').innerText = 'Refreshing...';
+  boot().finally(()=>{ document.getElementById('refreshBtn').disabled = false; document.getElementById('refreshBtn').innerText = 'Refresh'; });
+});
+
+/* admin toggle (convenience) */
+document.getElementById('adminToggle').addEventListener('click', ()=>{
+  location.hash = (location.hash === '#admin') ? '' : '#admin';
+  location.reload();
+});
+
+/* post-boot logic */
+function postBoot(){
+  sanitizeAndNormalize();
+  applyPremiumExpiry();
+  renderStats();
+  renderCityChips();
+  view = [...db];
+  renderDirectory();
+  // analytics hook
+  console.log('RIX_VIEW', {count: db.length, time: new Date().toISOString()});
+}
+
+/* ensure consistent shapes and defaults */
+function sanitizeAndNormalize(){
+  db = db.map((r, idx) => {
+    // ensure required columns exist with safe values
+    return {
+      ShopID: s(r.ShopID) || ('RIX-' + (idx+1).toString().padStart(4,'0')),
+      "Shop name": s(r["Shop name"]) || '',
+      Category: s(r.Category) || 'Industrial',
+      Industry: s(r.Industry) || '',
+      Size: s(r.Size) || '',
+      Location: s(r.Location) || '',
+      City: s(r.City) || 'Raebareli',
+      "Phone No.": s(r["Phone No."]) || '',
+      Verified: s(r.Verified).toLowerCase() === 'yes' ? 'yes' : '',
+      Premium: s(r.Premium).toLowerCase() === 'yes' ? 'yes' : '',
+      PremiumExpiry: s(r.PremiumExpiry) || '',
+      Rating: (r.Rating === undefined || r.Rating === '') ? 0 : Number(r.Rating),
+      Reviews: (r.Reviews === undefined || r.Reviews === '') ? 0 : Number(r.Reviews),
+      AgentID: s(r.AgentID) || '',
+      AgentCommission: num(r.AgentCommission),
+      PaymentStatus: s(r.PaymentStatus).toLowerCase() || '' // expected 'paid' or 'pending'
+    };
+  });
+}
+
+/* expiry processing & premium validity (considers PaymentStatus) */
+function applyPremiumExpiry(){
+  const now = new Date();
+  db.forEach(item => {
+    // if premium flagged
+    if(item.Premium === 'yes') {
+      // payment required for premium to be 'active'
+      if(item.PaymentStatus !== 'paid') {
+        item._premiumState = 'pending'; // awaiting payment
+      } else if(item.PremiumExpiry) {
+        const expiry = new Date(item.PremiumExpiry + 'T23:59:59');
+        if(expiry < now) {
+          item._premiumState = 'expired';
+        } else {
+          item._premiumState = 'active';
+          // compute days left
+          item._daysLeft = Math.ceil((expiry - now) / (1000*60*60*24));
+        }
+      } else {
+        // no expiry date -> treat as active if paid
+        item._premiumState = (item.PaymentStatus === 'paid') ? 'active' : 'pending';
+      }
+    } else {
+      item._premiumState = 'none';
+    }
+  });
+}
+
+/* stats */
+function renderStats(){
+  const total = db.length;
+  const verified = db.filter(x => x.Verified === 'yes').length;
+  const premiumActive = db.filter(x => x._premiumState === 'active').length;
+  const cities = new Set(db.map(x => x.City));
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('verifiedCount').textContent = verified;
+  document.getElementById('premiumCount').textContent = premiumActive;
+  document.getElementById('cityCount').textContent = cities.size;
+}
+
+/* city filter chips */
+function renderCityChips(){
+  const cities = ['All', ...Array.from(new Set(db.map(x => x.City)))];
+  const root = document.getElementById('cityFilters');
+  root.innerHTML = cities.map(c => `<div class="chip ${c===currentCity ? 'active' : ''}" onclick="selectCity('${escapeHtml(c)}')">${escapeHtml(c)}</div>`).join('');
+}
+
+/* select city */
+function selectCity(c){
+  currentCity = c;
+  // reapply search filter using current query
+  const q = document.getElementById('searchInput').value || '';
+  searchEngine(q);
+  renderCityChips();
+}
+
+/* escape helper (simple) */
+function escapeHtml(str){ return (str||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* search & filter */
+function searchEngine(q){
+  q = (q || '').toString().toLowerCase().trim();
+  view = db.filter(item => {
+    const cityMatch = (currentCity === 'All' || item.City === currentCity);
+    if(!cityMatch) return false;
+    // safe fields
+    const hay = (item["Shop name"] + ' ' + item.Category + ' ' + item.Industry + ' ' + item.Location + ' ' + item.City).toLowerCase();
+    return hay.includes(q);
+  });
+  renderDirectory();
+}
+
+/* priority: active premium (paid) > none > pending > expired (lowest) */
+function priorityScore(item){
+  if(item._premiumState === 'active') return 3;
+  if(item._premiumState === 'none') return 2;
+  if(item._premiumState === 'pending') return 1;
+  if(item._premiumState === 'expired') return 0;
+  return 2;
+}
+
+/* generate stars safely */
+function generateStars(n){
+  const r = Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
+  return '★'.repeat(r) + '☆'.repeat(5 - r);
+}
+
+/* safe phone link builder */
+function phoneLink(phone){
+  const d = sanitizePhone(phone);
+  if(!d) return '#';
+  return `tel:${d.length===10 ? d : '+91' + d}`;
+}
+function waLink(phone, shop){
+  const d = sanitizePhone(phone);
+  const text = encodeURIComponent(`Inquiry via RIX for ${shop}`);
+  if(!d) return `https://wa.me/?text=${text}`;
+  // ensure international format for wa.me: use country code (91) + number without plus
+  const full = (d.length===10) ? ('91' + d) : d;
+  return `https://wa.me/${full}?text=${text}`;
+}
+
+/* render directory */
+function renderDirectory(){
+  const root = document.getElementById('list');
+  if(!view || view.length === 0){
+    root.innerHTML = `<div style="text-align:center;padding:80px 20px;color:var(--muted)">No businesses found.</div>`;
+    return;
+  }
+
+  // non-destructive sort
+  const sorted = [...view].sort((a,b) => priorityScore(b) - priorityScore(a));
+
+  root.innerHTML = sorted.map(item => {
+    const premiumBadge = (item._premiumState === 'active') ? '💎' : '';
+    const premiumClass = (item._premiumState === 'active') ? 'premium' : '';
+    const verifiedTag = item.Verified === 'yes' ? `<span class="tag verified">Verified ✓</span>` : '';
+    const expiredTag = item._premiumState === 'expired' ? `<span class="tag expired">Expired</span>` : '';
+    const pendingTag = item._premiumState === 'pending' ? `<span class="tag">Pending Payment</span>` : '';
+    const daysLeft = item._premiumState === 'active' && item._daysLeft ? `<span class="tag">Ends in ${item._daysLeft}d</span>` : '';
+    const rating = Number(item.Rating) || 0;
+    const reviews = Number(item.Reviews) || 0;
+
+    // admin info visibility
+    const adminHtml = (isAdmin && item.AgentID) ? `
+      <div class="admin-box">
+        AGENT: ${escapeHtml(item.AgentID)} · COMMISSION: ₹${escapeHtml(String(item.AgentCommission || 0))} · PAYMENT: ${escapeHtml(item.PaymentStatus || 'pending')}
+      </div>
+    ` : '';
+
+    return `
+      <div class="card ${premiumClass}">
+        <div class="title">${escapeHtml(item["Shop name"])} ${premiumBadge}</div>
+        <div class="loc">📍 ${escapeHtml(item.Location)} • ${escapeHtml(item.City)}</div>
+
+        <div class="tag-row">
+          <div class="tag">${escapeHtml(item.Category)}</div>
+          <div class="tag">${escapeHtml(item.Industry || 'General')}</div>
+          ${verifiedTag}
+          ${daysLeft}${expiredTag}${pendingTag}
         </div>
-        <div class="filters" id="filters"></div>
-    </section>
 
-    <main id="list">
-        <div class="loader"></div>
-        <div class="loader"></div>
-        <div class="loader"></div>
-    </main>
+        <div class="rating">
+          <div class="stars">${generateStars(rating)}</div>
+          <div class="muted" style="color:var(--muted)">${reviews} reviews</div>
+        </div>
 
-    <nav>
-        <a href="#" class="active"><i>🏠</i>Directory</a>
-        <a class="add" href="https://wa.me/918146518503?text=Add%20Business%20To%20RIX">+</a>
-        <a href="https://wa.me/918146518503?text=Support"><i>🛡️</i>Support</a>
-    </nav>
+        <div class="actions">
+          <a class="call" href="${phoneLink(item["Phone No."])}">CALL</a>
+          <a class="wa" href="${waLink(item["Phone No."], item["Shop name"])}">💬</a>
+        </div>
 
-    <script>
-        /**
-         * RIX TITAN CORE ENGINE
-         * Architected for Shivansh Maurya.
-         * Massive data processing, multi-layer filtering, and UI rendering.
-         */
+        ${adminHtml}
+      </div>
+    `;
+  }).join('');
+}
 
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
-        
-        let db = [], view = [], currentCity = "All";
+/* Initialize view when data present */
+(function waitForData(){
+  // if db loaded already, postBoot was called; still ensure view/render
+  if(db && db.length) { view = [...db]; renderDirectory(); }
+  // else nothing — boot() will call render when done
+})();
 
-        // 1. DATA ACQUISITION
-        Papa.parse(SHEET_URL, {
-            download: true,
-            header: true,
-            complete: results => {
-                db = results.data.filter(row => row.ShopID && row["Shop name"]);
-                localStorage.setItem("rix_db", JSON.stringify(db));
-                boot();
-            },
-            error: () => {
-                db = JSON.parse(localStorage.getItem("rix_db") || "[]");
-                boot();
-            }
-        });
+/* Small UX: auto-update expiry countdown every 12h (no background jobs; client-side only) */
+setInterval(()=>{ applyPremiumExpiry(); renderStats(); renderDirectory(); }, 1000 * 60 * 60 * 12);
 
-        // 2. BOOT SEQUENCE
-        function boot() {
-            processExpiry();
-            renderStats();
-            renderCityChips();
-            view = [...db];
-            renderDirectory();
-        }
+/* Quick safety: expose a console helper for you (only when admin) */
+if(isAdmin){
+  window.RIX = { db, refresh: ()=>boot(false), view };
+  console.log('RIX admin mode enabled — window.RIX available');
+}
 
-        // 3. LOGIC: PREMIUM EXPIRY
-        function processExpiry() {
-            const now = new Date();
-            db.forEach(item => {
-                if(item.Premium === "yes" && item.PremiumExpiry) {
-                    if(new Date(item.PremiumExpiry) < now) {
-                        item.Premium = "expired";
-                    }
-                }
-            });
-        }
-
-        // 4. LOGIC: ANALYTICS
-        function renderStats() {
-            document.getElementById('st').textContent = db.length;
-            document.getElementById('sv').textContent = db.filter(x => x.Verified === "yes").length;
-            document.getElementById('sp').textContent = db.filter(x => x.Premium === "yes").length;
-            document.getElementById('sc').textContent = [...new Set(db.map(x => x.City))].length;
-        }
-
-        // 5. LOGIC: FILTER CHIPS
-        function renderCityChips() {
-            const cities = ["All", ...new Set(db.map(x => x.City))];
-            const root = document.getElementById('filters');
-            root.innerHTML = cities.map(c => `
-                <div class="chip ${c === currentCity ? "active" : ""}" onclick="filterByCity('${c}')">${c}</div>
-            `).join("");
-        }
-
-        function filterByCity(c) {
-            currentCity = c;
-            applyAllFilters();
-            renderCityChips();
-        }
-
-        // 6. LOGIC: MASTER SEARCH & FILTER
-        function searchEngine(query) {
-            applyAllFilters(query.toLowerCase());
-        }
-
-        function applyAllFilters(q = "") {
-            view = db.filter(item => {
-                const cityMatch = (currentCity === "All" || item.City === currentCity);
-                const searchMatch = (
-                    item["Shop name"].toLowerCase().includes(q) ||
-                    item.Category.toLowerCase().includes(q) ||
-                    item.Location.toLowerCase().includes(q) ||
-                    item.Industry.toLowerCase().includes(q)
-                );
-                return cityMatch && searchMatch;
-            });
-            renderDirectory();
-        }
-
-        // 7. UI: DIRECTORY RENDERER
-        function renderDirectory() {
-            const root = document.getElementById('list');
-            
-            if(view.length === 0) {
-                root.innerHTML = `<div style="text-align:center; padding:100px 0; color:var(--muted)">No businesses found matching your criteria.</div>`;
-                return;
-            }
-
-            // Priority Sorting (Diamond/Premium First)
-            const sorted = view.sort((a,b) => (b.Premium === "yes") - (a.Premium === "yes"));
-
-            root.innerHTML = sorted.map(item => `
-                <div class="card ${item.Premium === "yes" ? "premium" : ""}">
-                    <div class="title">${item["Shop name"]} ${item.Premium === "yes" ? "💎" : ""}</div>
-                    <div class="loc">📍 ${item.Location}, ${item.City}</div>
-
-                    <div class="tags">
-                        <span class="tag">${item.Category}</span>
-                        <span class="tag">${item.Industry}</span>
-                        ${item.Verified === "yes" ? `<span class="tag verified">Verified ✓</span>` : ""}
-                        ${item.Premium === "expired" ? `<span class="tag expired">Expiry Detected</span>` : ""}
-                    </div>
-
-                    <div class="rating-box">
-                        <div class="stars">${generateStars(item.Rating)}</div>
-                        <div class="reviews">${item.Reviews || 0} Professional Reviews</div>
-                    </div>
-
-                    <div class="actions">
-                        <a class="call" href="tel:${item["Phone No."]}">ESTABLISH CALL</a>
-                        <a class="wa" href="https://wa.me/91${item["Phone No."]}?text=Inquiry%20via%20RIX">💬</a>
-                    </div>
-
-                    ${item.AgentID ? `
-                        <div class="admin">
-                            <div><span>AGENT:</span> ${item.AgentID}</div>
-                            <div style="margin-top:5px; display:flex; justify-content:space-between;">
-                                <span>PAYMENT: ${item.PaymentStatus || "PENDING"}</span>
-                                <span>REVENUE: ₹${item.AgentCommission || 0}</span>
-                            </div>
-                        </div>
-                    ` : ""}
-                </div>
-            `).join("");
-        }
-
-        function generateStars(n) {
-            const r = Math.round(n || 0);
-            return "★".repeat(r) + "☆".repeat(5-r);
-        }
-    </script>
-
+/* end */
+</script>
 </body>
 </html>
