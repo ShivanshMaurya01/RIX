@@ -3,489 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <title>RIX ENTERPRISE | Raebareli's Industrial Powerhouse</title>
-    <meta name="description" content="Official Raebareli Industrial Exchange. The definitive directory for UPSIDA, Amawan, and City Industrial Hubs.">
-    <meta name="author" content="Shivansh Maurya">
+    <title>RIX | Raebareli Industrial Authority</title>
+
+    <meta name="description" content="India’s Independent Industrial Business Network">
     <meta name="theme-color" content="#020617">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=Space+Grotesk:wght@300;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
 
     <style>
-        /* SECTION 1: THE RIX DESIGN SYSTEM (TOKENIZED CSS)
-           ------------------------------------------------
-        */
+        /* SECTION 1: DESIGN SYSTEM */
         :root {
-            /* Branding Core */
-            --rix-primary: #3b82f6;
-            --rix-primary-glow: rgba(59, 130, 246, 0.4);
-            --rix-accent: #fbbf24;
-            --rix-accent-glow: rgba(251, 191, 36, 0.3);
-            --rix-success: #10b981;
-            --rix-error: #ef4444;
-            
-            /* Deep Space Palette */
-            --bg-body: #020617;
-            --bg-surface: #0f172a;
-            --bg-card: #1e293b;
-            --bg-glass: rgba(15, 23, 42, 0.85);
-            
-            /* Typography */
-            --text-h: #f8fafc;
-            --text-b: #cbd5e1;
-            --text-m: #94a3b8;
-            
-            /* Structural Tokens */
-            --br-s: 12px;
-            --br-m: 24px;
-            --br-l: 40px;
-            --border-thin: 1px solid rgba(255, 255, 255, 0.08);
-            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-            
-            /* Motion */
-            --ease: cubic-bezier(0.4, 0, 0.2, 1);
-            --duration: 0.4s;
+            --bg: #020617;
+            --surface: #0f172a;
+            --surface-light: #1e293b;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.3);
+            --gold: #fbbf24;
+            --green: #10b981;
+            --red: #ef4444;
+            --glass: rgba(15, 23, 42, 0.8);
+            --radius-xl: 32px;
+            --radius-m: 16px;
+            --shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
 
-        /* SECTION 2: GLOBAL RESET & MICRO-ANIMATIONS
-           ------------------------------------------
-        */
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        /* SECTION 2: GLOBAL ARCHITECTURE */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
         body {
-            background-color: var(--bg-body);
-            color: var(--text-b);
             font-family: 'Plus Jakarta Sans', sans-serif;
-            line-height: 1.5;
-            overflow-x: hidden;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
             padding-bottom: 140px;
+            overflow-x: hidden;
         }
 
-        @keyframes entrance {
-            from { opacity: 0; transform: translateY(30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
 
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
-        }
-
-        @keyframes glowPulse {
-            0% { box-shadow: 0 0 5px var(--rix-primary-glow); }
-            50% { box-shadow: 0 0 20px var(--rix-primary-glow); }
-            100% { box-shadow: 0 0 5px var(--rix-primary-glow); }
-        }
-
-        /* SECTION 3: THE HERO ARCHITECTURE
-           ---------------------------------
-        */
-        .rix-hero {
-            position: relative;
-            padding: 100px 24px 140px;
-            background: radial-gradient(circle at top right, #1e3a8a, transparent),
-                        linear-gradient(180deg, #020617 0%, #0f172a 100%);
-            border-bottom: var(--border-thin);
+        /* SECTION 3: HEADER & BRANDING */
+        header {
+            padding: 100px 24px 120px;
+            background: radial-gradient(circle at top right, #1e3a8a, transparent 70%), 
+                        linear-gradient(to bottom, #020617, #0f172a);
             text-align: center;
-            overflow: hidden;
+            border-bottom: 1px solid var(--border);
+            position: relative;
         }
 
-        .hero-mesh {
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40' fill='%23ffffff' fill-opacity='0.02'/%3E%3C/svg%3E");
-        }
-
-        .hero-badge {
+        header .badge {
             display: inline-block;
             background: rgba(59, 130, 246, 0.1);
-            color: var(--rix-primary);
+            color: var(--primary);
             font-weight: 800;
-            font-size: 11px;
-            padding: 8px 20px;
+            font-size: 10px;
+            padding: 8px 16px;
             border-radius: 100px;
-            border: 1px solid var(--rix-primary-glow);
             text-transform: uppercase;
-            letter-spacing: 2.5px;
-            margin-bottom: 25px;
-            animation: entrance 0.6s var(--ease);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
         }
 
-        .rix-hero h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(48px, 10vw, 72px);
-            font-weight: 700;
-            line-height: 0.85;
+        header h1 {
+            font-family: 'Bricolage Grotesk', sans-serif;
+            font-size: 68px;
+            font-weight: 800;
             letter-spacing: -4px;
-            color: var(--text-h);
+            line-height: 0.8;
         }
 
-        .rix-hero h1 span {
-            color: var(--rix-accent);
-            display: block;
-            font-size: clamp(20px, 4vw, 32px);
-            letter-spacing: 8px;
-            margin-top: 10px;
+        header p {
+            color: var(--muted);
+            margin-top: 15px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            font-size: 11px;
             text-transform: uppercase;
         }
 
-        /* SECTION 4: REAL-TIME DATA DASHBOARD
-           ------------------------------------
-        */
-        .rix-stats {
+        /* SECTION 4: LIVE ANALYTICS */
+        .stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
             padding: 0 20px;
             margin-top: -60px;
             position: relative;
             z-index: 10;
         }
 
-        .stat-node {
-            background: var(--bg-glass);
+        @media(min-width: 768px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+
+        .stat {
+            background: var(--glass);
             backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 25px 10px;
-            border-radius: var(--br-m);
-            border: var(--border-thin);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-m);
+            padding: 24px 15px;
             text-align: center;
-            box-shadow: var(--shadow-xl);
-            transition: var(--duration) var(--ease);
+            box-shadow: var(--shadow);
         }
 
-        .stat-node:hover { transform: translateY(-8px); border-color: var(--rix-primary); }
-
-        .stat-node .val {
+        .stat strong {
             display: block;
             font-family: 'JetBrains Mono', monospace;
             font-size: 32px;
-            font-weight: 800;
-            color: var(--text-h);
-            margin-bottom: 5px;
+            color: var(--text);
+            line-height: 1;
         }
 
-        .stat-node .lab {
-            font-size: 9px;
+        .stat span {
+            font-size: 10px;
             font-weight: 800;
+            color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-m);
+            letter-spacing: 1px;
         }
 
-        /* SECTION 5: THE CONTROL ENGINE (SEARCH & FILTERS)
-           -----------------------------------------------
-        */
-        .control-engine {
-            padding: 50px 20px 20px;
-        }
-
-        .search-container {
+        /* SECTION 5: CONTROL PANEL */
+        .controls { padding: 40px 20px 20px; }
+        
+        .search-box {
             position: relative;
-            background: var(--bg-card);
-            border-radius: var(--br-m);
-            border: var(--border-thin);
-            padding: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
             display: flex;
             align-items: center;
-            margin-bottom: 30px;
-            transition: var(--duration);
+            padding: 8px;
+            transition: 0.3s;
         }
 
-        .search-container:focus-within {
-            border-color: var(--rix-primary);
-            box-shadow: 0 0 0 4px var(--rix-primary-glow);
-        }
+        .search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-glow); }
 
-        .search-container input {
+        .search-box input {
             flex: 1;
             background: transparent;
             border: none;
-            outline: none;
-            color: var(--text-h);
-            padding: 15px 20px;
-            font-size: 17px;
+            color: white;
+            padding: 15px;
+            font-size: 16px;
             font-weight: 600;
         }
 
-        .search-icon-btn {
-            width: 55px;
-            height: 55px;
-            background: var(--rix-primary);
-            color: white;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+        .search-btn {
+            width: 50px; height: 50px;
+            background: var(--primary);
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .filter-section { margin-bottom: 25px; }
-
-        .filter-head {
+        .filters {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 10px 15px;
-        }
-
-        .filter-head label {
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--rix-primary);
-        }
-
-        .filter-scroll {
-            display: flex;
+            gap: 10px;
             overflow-x: auto;
-            gap: 12px;
+            margin-top: 20px;
             padding-bottom: 10px;
             scrollbar-width: none;
         }
 
-        .filter-scroll::-webkit-scrollbar { display: none; }
+        .filters::-webkit-scrollbar { display: none; }
 
         .chip {
-            background: var(--bg-card);
-            border: var(--border-thin);
-            color: var(--text-b);
-            padding: 12px 28px;
+            padding: 12px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 100px;
             font-size: 13px;
             font-weight: 700;
             white-space: nowrap;
             cursor: pointer;
             transition: 0.3s;
+            color: var(--muted);
         }
 
         .chip.active {
-            background: var(--rix-primary);
+            background: var(--primary);
             color: white;
-            border-color: var(--rix-primary);
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px var(--primary-glow);
         }
 
-        /* SECTION 6: INDUSTRIAL CARD ARCHITECTURE
-           ---------------------------------------
-        */
-        #master-feed {
-            padding: 10px 20px;
-            display: grid;
-            gap: 25px;
-        }
+        /* SECTION 6: THE DIRECTORY LIST */
+        #list { padding: 20px; display: grid; gap: 24px; }
+        
+        @media(min-width: 900px) { #list { grid-template-columns: repeat(2, 1fr); } }
 
-        .rix-card {
-            background: var(--bg-card);
-            border-radius: var(--br-l);
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
             padding: 30px;
-            border: var(--border-thin);
             position: relative;
             overflow: hidden;
-            animation: entrance 0.8s var(--ease) backwards;
+            animation: fadeIn 0.6s ease-out backwards;
+            transition: 0.4s;
         }
 
-        /* Premium Logic */
-        .rix-card.premium {
-            background: linear-gradient(165deg, #1e293b 0%, #020617 100%);
-            border: 1px solid var(--rix-accent);
-            box-shadow: 0 20px 40px rgba(251, 191, 36, 0.1);
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        .card.premium {
+            border: 2px solid var(--gold);
+            background: linear-gradient(145deg, #1e293b, #020617);
         }
 
-        .rix-card.premium::after {
+        .card.premium::before {
             content: "DIAMOND PARTNER";
             position: absolute;
-            top: 25px; right: -40px;
-            background: var(--rix-accent);
+            top: 20px; right: -35px;
+            background: var(--gold);
             color: #000;
             font-size: 9px;
             font-weight: 900;
-            padding: 8px 50px;
+            padding: 6px 45px;
             transform: rotate(45deg);
-            z-index: 5;
         }
 
-        .card-header {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .visual-id {
-            width: 75px;
-            height: 75px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 35px;
-            border: var(--border-thin);
-        }
-
-        .premium .visual-id {
-            background: rgba(251, 191, 36, 0.05);
-            border-color: var(--rix-accent-glow);
-        }
-
-        .shop-info h3 {
-            font-size: 24px;
+        .title {
+            font-size: 26px;
             font-weight: 800;
-            color: var(--text-h);
+            color: var(--text);
             letter-spacing: -0.5px;
             margin-bottom: 4px;
+            display: flex; align-items: center; gap: 10px;
         }
 
-        .shop-info p {
-            font-size: 14px;
-            color: var(--text-m);
-            font-weight: 500;
-        }
+        .loc { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
 
-        .rating-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(0,0,0,0.2);
-            padding: 12px 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stars { color: var(--rix-accent); font-size: 14px; letter-spacing: 2px; }
-        .rev-data { font-size: 10px; font-weight: 800; color: var(--text-m); text-transform: uppercase; }
-
-        .tag-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 30px;
-        }
-
-        .rix-tag {
-            padding: 8px 16px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            font-size: 11px;
+        .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 25px; }
+        
+        .tag {
+            font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
-            color: var(--text-m);
-            border: var(--border-thin);
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: var(--muted);
         }
 
-        .rix-tag.verified {
-            color: var(--rix-success);
-            border-color: var(--rix-success);
-            background: rgba(16, 185, 129, 0.05);
-        }
+        .verified { color: var(--green); border-color: var(--green); background: rgba(16, 185, 129, 0.05); }
+        .expired { color: var(--red); border-color: var(--red); background: rgba(239, 68, 68, 0.05); }
 
-        /* Action Buttons */
-        .action-row {
-            display: grid;
-            grid-template-columns: 1fr 65px;
-            gap: 12px;
-        }
-
-        .btn-call {
-            background: var(--rix-primary);
-            color: white;
-            text-decoration: none;
-            height: 65px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            gap: 12px;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-
-        .btn-call:active { transform: scale(0.95); }
-
-        .btn-wa {
-            background: #25d366;
-            color: white;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            text-decoration: none;
-        }
-
-        /* SECTION 7: MODAL SYSTEM (BOTTOM SHEET)
-           -------------------------------------
-        */
-        .rix-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(15px);
-            z-index: 2000;
-            display: none;
-            align-items: flex-end;
-        }
-
-        .rix-modal-sheet {
-            background: var(--bg-surface);
-            width: 100%;
-            border-radius: 40px 40px 0 0;
-            padding: 45px 25px 60px;
-            transform: translateY(100%);
-            transition: transform 0.5s var(--ease);
-            border-top: 1px solid var(--rix-primary-glow);
-        }
-
-        .rix-modal-overlay.open { display: flex; }
-        .rix-modal-overlay.open .rix-modal-sheet { transform: translateY(0); }
-
-        .modal-body { text-align: center; }
-        .modal-body .icon { font-size: 70px; margin-bottom: 20px; display: block; }
-        .modal-body h2 { font-size: 32px; font-weight: 800; color: var(--text-h); margin-bottom: 10px; }
-        .modal-body .subtitle { color: var(--rix-primary); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; display: block; margin-bottom: 30px; }
-
-        .data-grid {
-            display: grid;
-            gap: 15px;
-            text-align: left;
-            margin-bottom: 40px;
-        }
-
-        .data-row {
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: 20px;
+        .rating-box {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: var(--border-thin);
+            margin-bottom: 25px;
         }
 
-        .data-row label { color: var(--text-m); font-size: 12px; font-weight: 700; text-transform: uppercase; }
-        .data-row span { color: var(--text-h); font-weight: 800; }
+        .stars { color: var(--gold); font-weight: 800; font-size: 14px; }
+        .reviews { font-size: 11px; font-weight: 800; color: var(--muted); }
 
-        /* SECTION 8: ENTERPRISE NAVIGATION DOCK
-           -------------------------------------
-        */
-        .nav-dock {
-            position: fixed;
-            bottom: 30px;
-            left: 20px;
-            right: 20px;
-            background: var(--bg-glass);
-            backdrop-filter: blur(30px);
-            border: var(--border-thin);
+        /* SECTION 7: ACTIONS */
+        .actions { display: grid; grid-template-columns: 1fr 65px; gap: 12px; }
+        
+        .call {
+            background: var(--primary);
+            color: white;
+            padding: 18px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 800;
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .call:active { transform: scale(0.95); }
+
+        .wa {
+            background: #22c55e;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            text-decoration: none;
+        }
+
+        /* SECTION 8: ADMIN DASHBOARD */
+        .admin {
+            margin-top: 25px;
             padding: 15px;
-            border-radius: 45px;
+            background: rgba(0,0,0,0.3);
+            border: 1px dashed var(--border);
+            border-radius: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .admin span { color: var(--primary); font-weight: 800; }
+
+        .hidden { display: none !important; }
+
+        /* SECTION 9: NAVIGATION DOCK */
+        nav {
+            position: fixed;
+            bottom: 30px; left: 20px; right: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -493,374 +323,203 @@
             box-shadow: 0 30px 60px rgba(0,0,0,0.8);
         }
 
-        .nav-item {
-            text-decoration: none;
-            color: var(--text-m);
-            font-size: 10px;
-            font-weight: 800;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            transition: 0.3s;
-        }
+        nav a { font-size: 11px; font-weight: 800; color: var(--muted); text-decoration: none; text-align: center; }
+        nav a i { display: block; font-size: 22px; font-style: normal; margin-bottom: 4px; }
+        nav a.active { color: var(--primary); }
 
-        .nav-item.active { color: var(--rix-primary); }
-        .nav-item i { font-size: 26px; font-style: normal; }
-
-        .nav-add {
-            width: 75px;
-            height: 75px;
-            background: var(--rix-primary);
+        nav .add {
+            background: var(--primary);
+            width: 70px; height: 70px;
             border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 35px; color: #fff;
             margin-top: -60px;
-            border: 8px solid var(--bg-body);
-            color: white;
-            font-size: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.5);
+            border: 8px solid var(--bg);
+            box-shadow: 0 10px 20px var(--primary-glow);
         }
 
-        /* SECTION 9: SYSTEM LOADERS (SKELETONS)
-           ------------------------------------
-        */
-        .skeleton {
-            height: 300px;
-            background: linear-gradient(90deg, #1e293b 25%, #2d3748 50%, #1e293b 75%);
-            background-size: 1000px 100%;
-            animation: shimmer 2s infinite linear;
-            border-radius: var(--br-l);
-        }
-
-        /* RESPONSIVE OVERRIDES */
-        @media (min-width: 768px) {
-            #master-feed { grid-template-columns: repeat(2, 1fr); }
-            .rix-stats { grid-template-columns: repeat(3, 1fr); max-width: 800px; margin-inline: auto; }
-        }
+        /* LOADING SKELETON */
+        .loader { height: 200px; background: var(--surface); border-radius: var(--radius-xl); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
     </style>
 </head>
+
 <body>
 
-    <div class="rix-container">
+    <header>
+        <div class="badge">Independent Hub 2026</div>
+        <h1>RIX</h1>
+        <p>Industrial Business Network</p>
+    </header>
 
-        <header class="rix-hero">
-            <div class="hero-mesh"></div>
-            <div class="hero-badge">Industrial Authority 2026</div>
-            <h1>RIX<span>RAEBARELI</span></h1>
-        </header>
+    <section class="stats">
+        <div class="stat"><strong id="st">0</strong><span>Total Units</span></div>
+        <div class="stat"><strong id="sv" style="color:var(--green)">0</strong><span>Verified</span></div>
+        <div class="stat"><strong id="sp" style="color:var(--gold)">0</strong><span>Premium</span></div>
+        <div class="stat"><strong id="sc">0</strong><span>Hubs/Cities</span></div>
+    </section>
 
-        <section class="rix-stats">
-            <div class="stat-node">
-                <span class="val" id="stat-total">0</span>
-                <span class="lab">Total Units</span>
-            </div>
-            <div class="stat-node">
-                <span class="val" id="stat-ver" style="color: var(--rix-success);">0</span>
-                <span class="lab">Verified</span>
-            </div>
-            <div class="stat-node">
-                <span class="val" id="stat-prem" style="color: var(--rix-accent);">0</span>
-                <span class="lab">Premium</span>
-            </div>
-        </section>
-
-        <div class="control-engine">
-            <div class="search-container">
-                <input type="text" id="rixSearch" placeholder="Search by name, category or area..." onkeyup="TitanEngine.handleSearch(this.value)">
-                <div class="search-icon-btn">🔍</div>
-            </div>
-
-            <div class="filter-section">
-                <div class="filter-head">
-                    <label>Industry Vertical</label>
-                </div>
-                <div class="filter-scroll" id="cat-filters">
-                    </div>
-            </div>
-
-            <div class="filter-section">
-                <div class="filter-head">
-                    <label>Industrial Hub</label>
-                </div>
-                <div class="filter-scroll" id="area-filters">
-                    </div>
-            </div>
+    <section class="controls">
+        <div class="search-box">
+            <input id="searchInput" placeholder="Search factory, tools, city..." onkeyup="searchEngine(this.value)">
+            <div class="search-btn">🔍</div>
         </div>
+        <div class="filters" id="filters"></div>
+    </section>
 
-        <main id="master-feed">
-            <div class="skeleton"></div>
-            <div class="skeleton"></div>
-            <div class="skeleton"></div>
-        </main>
+    <main id="list">
+        <div class="loader"></div>
+        <div class="loader"></div>
+        <div class="loader"></div>
+    </main>
 
-        <nav class="nav-dock">
-            <a href="#" class="nav-item active" onclick="location.reload()">
-                <i>🏠</i><span>Directory</span>
-            </a>
-            <a href="https://wa.me/918146518503?text=Add%20My%20Industry" class="nav-add">＋</a>
-            <a href="#" class="nav-item" onclick="TitanEngine.toggleSupport()">
-                <i>🛡️</i><span>Assistance</span>
-            </a>
-        </nav>
-
-        <div class="rix-modal-overlay" id="profile-modal" onclick="TitanEngine.closeProfile()">
-            <div class="rix-modal-sheet" onclick="event.stopPropagation()">
-                <div class="modal-body" id="modal-content">
-                    </div>
-                <button class="btn-call" style="width:100%; background:var(--bg-card); color:var(--text-h); margin-top:15px;" onclick="TitanEngine.closeProfile()">
-                    CLOSE PROFILE
-                </button>
-            </div>
-        </div>
-
-    </div>
+    <nav>
+        <a href="#" class="active"><i>🏠</i>Directory</a>
+        <a class="add" href="https://wa.me/918146518503?text=Add%20Business%20To%20RIX">+</a>
+        <a href="https://wa.me/918146518503?text=Support"><i>🛡️</i>Support</a>
+    </nav>
 
     <script>
         /**
-         * RIX TITAN ENGINE 100.0
+         * RIX TITAN CORE ENGINE
          * Architected for Shivansh Maurya.
-         * Handling massive data, real-time filtering, and state management.
+         * Massive data processing, multi-layer filtering, and UI rendering.
          */
+
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
         
-        const TitanEngine = {
-            // CENTRAL STATE
-            state: {
-                raw: [],
-                active: [],
-                filters: {
-                    cat: 'All',
-                    area: 'All',
-                    query: ''
-                },
-                isLoaded: false
+        let db = [], view = [], currentCity = "All";
+
+        // 1. DATA ACQUISITION
+        Papa.parse(SHEET_URL, {
+            download: true,
+            header: true,
+            complete: results => {
+                db = results.data.filter(row => row.ShopID && row["Shop name"]);
+                localStorage.setItem("rix_db", JSON.stringify(db));
+                boot();
             },
-
-            // MASTER CONFIG
-            config: {
-                data_url: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv",
-                icons: {
-                    'Hardware': '🛠️', 'Machinery': '🏗️', 'Electrical': '⚡', 
-                    'Chemicals': '🧪', 'Repairing': '👨‍🔧', 'Logistics': '🚛',
-                    'Manufacturing': '🏭', 'Agro': '🌾', 'Steel': '🔩'
-                }
-            },
-
-            // 1. SYSTEM INITIALIZATION
-            async init() {
-                console.log("TITAN CORE: Initializing Deployment...");
-                try {
-                    const response = await fetch(this.config.data_url);
-                    const dataText = await response.text();
-                    this.state.raw = this.parseCSV(dataText);
-                    this.state.active = [...this.state.raw];
-                    
-                    this.buildFilters();
-                    this.syncUI();
-                    this.state.isLoaded = true;
-                } catch (err) {
-                    this.errorHandler(err);
-                }
-            },
-
-            // 2. DATA PARSING ENGINE
-            parseCSV(text) {
-                const lines = text.split('\n').slice(1);
-                return lines.map(row => {
-                    // Complex Regex for CSV handling
-                    const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-                    const d = cols.map(v => v.trim().replace(/"/g, ''));
-                    
-                    return {
-                        uid: 'RIX-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
-                        name: d[0],
-                        cat: d[1] || 'Industrial',
-                        area: d[2] || 'Raebareli',
-                        phone: d[3],
-                        isVer: d[4] === 'YES',
-                        isPrem: d[5] === 'YES',
-                        sector: d[6] || 'General',
-                        scale: d[7] || 'Medium',
-                        rating: parseFloat(d[8]) || 0,
-                        reviews: d[9] || 0
-                    };
-                }).filter(x => x.name);
-            },
-
-            // 3. UI SYNC & RENDERER
-            syncUI() {
-                this.updateCounters();
-                this.renderFeed();
-            },
-
-            updateCounters() {
-                const animate = (id, target) => {
-                    let count = 0;
-                    const el = document.getElementById(id);
-                    const step = Math.ceil(target / 50);
-                    const timer = setInterval(() => {
-                        count += step;
-                        if(count >= target) { el.innerText = target + "+"; clearInterval(timer); }
-                        else { el.innerText = count; }
-                    }, 30);
-                };
-
-                animate('stat-total', this.state.raw.length);
-                animate('stat-ver', this.state.raw.filter(i => i.isVer).length);
-                animate('stat-prem', this.state.raw.filter(i => i.isPrem).length);
-            },
-
-            buildFilters() {
-                const cats = ['All', ...new Set(this.state.raw.map(i => i.cat))];
-                const areas = ['All', ...new Set(this.state.raw.map(i => i.area))];
-
-                document.getElementById('cat-filters').innerHTML = cats.map(c => `
-                    <div class="chip ${this.state.filters.cat === c ? 'active' : ''}" 
-                         onclick="TitanEngine.applyFilter('cat', '${c}')">${c}</div>
-                `).join('');
-
-                document.getElementById('area-filters').innerHTML = areas.map(a => `
-                    <div class="chip ${this.state.filters.area === a ? 'active' : ''}" 
-                         onclick="TitanEngine.applyFilter('area', '${a}')">${a}</div>
-                `).join('');
-            },
-
-            // 4. THE FILTER MATRIX (Simultaneous Multi-Filtering)
-            applyFilter(type, val) {
-                this.state.filters[type] = val;
-                this.buildFilters(); // Refresh chips
-                
-                this.state.active = this.state.raw.filter(item => {
-                    const matchCat = this.state.filters.cat === 'All' || item.cat === this.state.filters.cat;
-                    const matchArea = this.state.filters.area === 'All' || item.area === this.state.filters.area;
-                    const matchQuery = item.name.toLowerCase().includes(this.state.filters.query) || 
-                                      item.cat.toLowerCase().includes(this.state.filters.query);
-                    
-                    return matchCat && matchArea && matchQuery;
-                });
-
-                // Prioritize Premium Diamond Partners
-                this.state.active.sort((a, b) => b.isPrem - a.isPrem);
-                this.renderFeed();
-            },
-
-            handleSearch(q) {
-                this.state.filters.query = q.toLowerCase();
-                this.applyFilter('query', this.state.filters.query);
-            },
-
-            // 5. CORE RENDERER
-            renderFeed() {
-                const root = document.getElementById('master-feed');
-                
-                if(this.state.active.length === 0) {
-                    root.innerHTML = `
-                        <div style="text-align:center; padding:80px 20px;">
-                            <span style="font-size:60px;">🛰️</span>
-                            <h3 style="margin-top:20px; color:var(--text-h);">No Industries Found</h3>
-                            <p style="color:var(--text-m);">Broaden your search or filters.</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                root.innerHTML = this.state.active.map(shop => `
-                    <div class="rix-card ${shop.isPrem ? 'premium' : ''}" onclick="TitanEngine.openProfile('${shop.uid}')">
-                        <div class="card-header">
-                            <div class="visual-id">
-                                ${this.config.icons[shop.cat] || '🏭'}
-                            </div>
-                            <div class="shop-info">
-                                <h3>${shop.name} ${shop.isPrem ? '💎' : ''}</h3>
-                                <p>📍 ${shop.area}</p>
-                            </div>
-                        </div>
-
-                        <div class="rating-bar">
-                            <div class="stars">${'★'.repeat(Math.round(shop.rating))}${'☆'.repeat(5-Math.round(shop.rating))}</div>
-                            <div class="rev-data">${shop.reviews} INDUSTRIAL VERIFIED REVIEWS</div>
-                        </div>
-
-                        <div class="tag-container">
-                            <span class="rix-tag">${shop.cat}</span>
-                            <span class="rix-tag">${shop.scale} SCALE</span>
-                            ${shop.isVer ? '<span class="rix-tag verified">Verified Entity ✓</span>' : ''}
-                        </div>
-
-                        <div class="action-row" onclick="event.stopPropagation()">
-                            <a href="tel:${shop.phone}" class="btn-call">
-                                <i>📞</i> CONTACT NOW
-                            </a>
-                            <a href="https://wa.me/918146518503?text=Inquiry%20for%20${shop.name}" class="btn-wa">
-                                💬
-                            </a>
-                        </div>
-                    </div>
-                `).join('');
-            },
-
-            // 6. MODAL SYSTEM
-            openProfile(uid) {
-                const shop = this.state.raw.find(i => i.uid === uid);
-                const content = document.getElementById('modal-content');
-                
-                content.innerHTML = `
-                    <div class="modal-body">
-                        <span class="icon">${this.config.icons[shop.cat] || '🏭'}</span>
-                        <h2>${shop.name}</h2>
-                        <span class="subtitle">${shop.sector} Excellence Hub</span>
-                    </div>
-
-                    <div class="data-grid">
-                        <div class="data-row">
-                            <label>District Hub</label>
-                            <span>${shop.area}, Raebareli</span>
-                        </div>
-                        <div class="data-row">
-                            <label>Trust Level</label>
-                            <span style="color:${shop.isVer ? 'var(--rix-success)' : 'var(--text-m)'}">${shop.isVer ? 'Fully Verified' : 'Standard'}</span>
-                        </div>
-                        <div class="data-row">
-                            <label>Market Scale</label>
-                            <span>${shop.scale} Economy</span>
-                        </div>
-                        <div class="data-row">
-                            <label>Rating Score</label>
-                            <span style="color:var(--rix-accent)">${shop.rating} / 5.0</span>
-                        </div>
-                    </div>
-
-                    <a href="tel:${shop.phone}" class="btn-call" style="height:75px; font-size:18px;">
-                        ESTABLISH DIRECT CONNECTION
-                    </a>
-                `;
-
-                document.getElementById('profile-modal').classList.add('open');
-            },
-
-            closeProfile() {
-                document.getElementById('profile-modal').classList.remove('open');
-            },
-
-            toggleSupport() {
-                alert("RIX ENTERPRISE SUPPORT\nFounder: Shivansh Maurya\nWhatsApp: +91 8146518503\nStatus: Online");
-            },
-
-            errorHandler(e) {
-                console.error("CRITICAL ERROR:", e);
-                document.getElementById('master-feed').innerHTML = `
-                    <div style="padding:60px; text-align:center;">
-                        <h2 style="color:var(--rix-error);">SYNC FAILED</h2>
-                        <p>Unable to connect to RIX database. Check link or internet.</p>
-                        <button onclick="location.reload()" style="margin-top:20px; padding:10px 30px; background:var(--rix-primary); border:none; color:white; border-radius:10px;">Retry</button>
-                    </div>
-                `;
+            error: () => {
+                db = JSON.parse(localStorage.getItem("rix_db") || "[]");
+                boot();
             }
-        };
+        });
 
-        // SYSTEM IGNITION
-        window.addEventListener('DOMContentLoaded', () => TitanEngine.init());
+        // 2. BOOT SEQUENCE
+        function boot() {
+            processExpiry();
+            renderStats();
+            renderCityChips();
+            view = [...db];
+            renderDirectory();
+        }
+
+        // 3. LOGIC: PREMIUM EXPIRY
+        function processExpiry() {
+            const now = new Date();
+            db.forEach(item => {
+                if(item.Premium === "yes" && item.PremiumExpiry) {
+                    if(new Date(item.PremiumExpiry) < now) {
+                        item.Premium = "expired";
+                    }
+                }
+            });
+        }
+
+        // 4. LOGIC: ANALYTICS
+        function renderStats() {
+            document.getElementById('st').textContent = db.length;
+            document.getElementById('sv').textContent = db.filter(x => x.Verified === "yes").length;
+            document.getElementById('sp').textContent = db.filter(x => x.Premium === "yes").length;
+            document.getElementById('sc').textContent = [...new Set(db.map(x => x.City))].length;
+        }
+
+        // 5. LOGIC: FILTER CHIPS
+        function renderCityChips() {
+            const cities = ["All", ...new Set(db.map(x => x.City))];
+            const root = document.getElementById('filters');
+            root.innerHTML = cities.map(c => `
+                <div class="chip ${c === currentCity ? "active" : ""}" onclick="filterByCity('${c}')">${c}</div>
+            `).join("");
+        }
+
+        function filterByCity(c) {
+            currentCity = c;
+            applyAllFilters();
+            renderCityChips();
+        }
+
+        // 6. LOGIC: MASTER SEARCH & FILTER
+        function searchEngine(query) {
+            applyAllFilters(query.toLowerCase());
+        }
+
+        function applyAllFilters(q = "") {
+            view = db.filter(item => {
+                const cityMatch = (currentCity === "All" || item.City === currentCity);
+                const searchMatch = (
+                    item["Shop name"].toLowerCase().includes(q) ||
+                    item.Category.toLowerCase().includes(q) ||
+                    item.Location.toLowerCase().includes(q) ||
+                    item.Industry.toLowerCase().includes(q)
+                );
+                return cityMatch && searchMatch;
+            });
+            renderDirectory();
+        }
+
+        // 7. UI: DIRECTORY RENDERER
+        function renderDirectory() {
+            const root = document.getElementById('list');
+            
+            if(view.length === 0) {
+                root.innerHTML = `<div style="text-align:center; padding:100px 0; color:var(--muted)">No businesses found matching your criteria.</div>`;
+                return;
+            }
+
+            // Priority Sorting (Diamond/Premium First)
+            const sorted = view.sort((a,b) => (b.Premium === "yes") - (a.Premium === "yes"));
+
+            root.innerHTML = sorted.map(item => `
+                <div class="card ${item.Premium === "yes" ? "premium" : ""}">
+                    <div class="title">${item["Shop name"]} ${item.Premium === "yes" ? "💎" : ""}</div>
+                    <div class="loc">📍 ${item.Location}, ${item.City}</div>
+
+                    <div class="tags">
+                        <span class="tag">${item.Category}</span>
+                        <span class="tag">${item.Industry}</span>
+                        ${item.Verified === "yes" ? `<span class="tag verified">Verified ✓</span>` : ""}
+                        ${item.Premium === "expired" ? `<span class="tag expired">Expiry Detected</span>` : ""}
+                    </div>
+
+                    <div class="rating-box">
+                        <div class="stars">${generateStars(item.Rating)}</div>
+                        <div class="reviews">${item.Reviews || 0} Professional Reviews</div>
+                    </div>
+
+                    <div class="actions">
+                        <a class="call" href="tel:${item["Phone No."]}">ESTABLISH CALL</a>
+                        <a class="wa" href="https://wa.me/91${item["Phone No."]}?text=Inquiry%20via%20RIX">💬</a>
+                    </div>
+
+                    ${item.AgentID ? `
+                        <div class="admin">
+                            <div><span>AGENT:</span> ${item.AgentID}</div>
+                            <div style="margin-top:5px; display:flex; justify-content:space-between;">
+                                <span>PAYMENT: ${item.PaymentStatus || "PENDING"}</span>
+                                <span>REVENUE: ₹${item.AgentCommission || 0}</span>
+                            </div>
+                        </div>
+                    ` : ""}
+                </div>
+            `).join("");
+        }
+
+        function generateStars(n) {
+            const r = Math.round(n || 0);
+            return "★".repeat(r) + "☆".repeat(5-r);
+        }
     </script>
+
 </body>
 </html>
