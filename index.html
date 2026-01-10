@@ -5,234 +5,336 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>RIX | Raebareli Industrial Exchange</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
-:root{
-  --bg:#020617; --card:#0f172a; --text:#f8fafc; --muted:#94a3b8;
-  --border:rgba(255,255,255,.08); --primary:#3b82f6; --gold:#fbbf24; --green:#10b981;
+:root {
+  /* Cobalt & Carbon Professional Palette */
+  --bg: #020617; 
+  --surface: #0f172a; 
+  --card: #1e293b;
+  --text: #f8fafc; 
+  --muted: #64748b; 
+  --border: rgba(255,255,255,0.08); 
+  --primary: #3b82f6; 
+  --accent: #60a5fa;
+  --gold: #fbbf24; 
+  --green: #10b981;
+  --red: #ef4444;
+  --glass: rgba(15, 23, 42, 0.8);
 }
-*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-body{ margin:0; background:var(--bg); color:var(--text); font-family:'Plus Jakarta Sans',sans-serif; padding-bottom:100px; }
 
-header{ text-align:center; padding:60px 16px 30px; background:radial-gradient(circle at top right, #172554 0%, #020617 100%); border-bottom:1px solid var(--border); }
-h1{font-size:48px; font-weight:800; margin:0; letter-spacing:-2px;}
-.subtitle{color:var(--muted); font-size:12px; letter-spacing:2px; font-weight:700; margin-top:5px;}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; transition: all 0.2s ease; }
+body { 
+  margin: 0; 
+  background: var(--bg); 
+  color: var(--text); 
+  font-family: 'Plus Jakarta Sans', sans-serif; 
+  padding-bottom: 120px;
+  line-height: 1.5;
+}
 
-.controls{ position:sticky; top:0; z-index:100; background:rgba(2, 6, 23, 0.9); backdrop-filter:blur(15px); padding:15px; border-bottom:1px solid var(--border); }
-input, select{ width:100%; padding:14px; border-radius:14px; border:1px solid var(--border); background:var(--card); color:white; margin-bottom:10px; font-size:16px; font-weight:600; }
+/* Header Section */
+header {
+  padding: 80px 24px 40px;
+  background: radial-gradient(circle at top right, #1e3a8a 0%, #020617 70%);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+h1 { font-size: 52px; font-weight: 800; margin: 0; letter-spacing: -3px; color: #fff; }
+.subtitle { color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; }
 
-#feed{ max-width:800px; margin:auto; padding:16px; display:grid; gap:16px; }
-.card{ background:var(--card); border:1px solid var(--border); border-radius:24px; padding:24px; position:relative; overflow:hidden; }
-.card.premium{ border:1px solid var(--gold); box-shadow:0 0 20px rgba(251,191,36,0.1); }
-.card.premium::after{ content:'PREMIUM'; position:absolute; top:0; right:0; background:var(--gold); color:#000; font-size:9px; font-weight:900; padding:4px 12px; border-bottom-left-radius:12px; }
+/* Control Center */
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  gap: 12px;
+}
+input, select {
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); }
 
-.title{font-size:22px; font-weight:800; margin-bottom:4px;}
-.loc{font-size:14px; color:var(--muted); margin-bottom:15px; display:flex; align-items:center; gap:5px;}
-.tags{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;}
-.tag{ font-size:11px; padding:5px 12px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--muted); font-weight:600; }
-.tag.ver{color:var(--green); border-color:rgba(16,185,129,.3); background:rgba(16,185,129,0.05);}
+/* Feed & Cards */
+#feed { max-width: 800px; margin: auto; padding: 20px; display: grid; gap: 20px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+}
+.card.premium {
+  border: 1px solid var(--gold);
+  background: linear-gradient(165deg, #1e293b 0%, #020617 100%);
+}
+.card.premium::before {
+  content: 'PREMIUM PARTNER';
+  position: absolute; top: 0; right: 0;
+  background: var(--gold); color: #000;
+  font-size: 9px; font-weight: 900; padding: 5px 14px;
+  border-bottom-left-radius: 16px;
+}
 
-.actions{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.btn{ padding:15px; border-radius:14px; text-align:center; text-decoration:none; font-weight:800; font-size:14px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
-.call{background:#1e293b; color:white; border:1px solid var(--border);}
-.wa{background:var(--primary); color:white;}
+.c-name { font-size: 24px; font-weight: 800; margin-bottom: 6px; color: #fff; }
+.c-loc { font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-bottom: 18px; }
 
-.admin-panel{ display:none; background:#000; padding:20px; border-bottom:2px solid var(--primary); }
-.stat-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; }
-.stat-box{ background:#111; padding:15px; border-radius:15px; border:1px solid #333; }
-.stat-box small{ font-size:10px; color:#666; text-transform:uppercase; }
-.stat-box div{ font-size:24px; font-weight:800; margin-top:5px; }
-.admin-row{ font-family:monospace; font-size:11px; color:var(--muted); margin-top:15px; padding-top:10px; border-top:1px dashed #333; }
+.tag-cloud { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.tag {
+  font-size: 11px; font-weight: 700; padding: 6px 12px;
+  border-radius: 100px; background: rgba(255,255,255,0.05);
+  color: var(--accent); border: 1px solid var(--border);
+}
+.tag.ver { color: var(--green); border-color: rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.05); }
 
-nav{ position:fixed; bottom:20px; left:20px; right:20px; background:rgba(15, 23, 42, 0.9); backdrop-filter:blur(20px); border:1px solid var(--border); border-radius:25px; display:flex; justify-content:space-around; align-items:center; padding:15px; z-index:2000; box-shadow:0 10px 40px rgba(0,0,0,0.5); }
-.nav-btn{ font-size:24px; cursor:pointer; filter:grayscale(1); transition:0.2s; }
-.nav-btn:active{ transform:scale(0.9); }
+/* Action Buttons */
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.btn {
+  padding: 16px; border-radius: 18px; text-align: center; text-decoration: none;
+  font-weight: 800; font-size: 14px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-call { background: var(--card); color: #fff; border: 1px solid var(--border); }
+.btn-wa { background: var(--primary); color: #fff; box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39); }
+.btn:active { transform: scale(0.96); }
 
-.loader { text-align:center; padding:50px; color:var(--muted); }
+/* Admin Dashboard */
+#adminPanel { display: none; background: #000; padding: 25px; border-bottom: 2px solid var(--primary); }
+.stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.stat-card { background: #111; padding: 20px; border-radius: 20px; border: 1px solid #222; }
+.stat-card small { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.stat-card div { font-size: 28px; font-weight: 800; margin-top: 5px; color: #fff; }
+.admin-data-line { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 15px; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 10px; }
+
+/* Navigation Bar */
+nav {
+  position: fixed; bottom: 25px; left: 20px; right: 20px;
+  background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(25px);
+  border: 1px solid var(--border); border-radius: 30px;
+  padding: 12px 24px; display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4); z-index: 2000;
+}
+.nav-icon { font-size: 24px; cursor: pointer; filter: drop-shadow(0 0 10px rgba(0,0,0,0.5)); }
+.nav-fab {
+  background: var(--primary); width: 64px; height: 64px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none; margin-top: -50px; border: 6px solid var(--bg);
+  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4); font-size: 32px; color: #fff;
+}
+
+.loading-state { text-align: center; padding: 100px 20px; color: var(--muted); font-weight: 600; }
 </style>
 </head>
 <body>
 
-<div class="admin-panel" id="adminPanel">
-  <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-    <h3 style="margin:0; color:var(--primary)">🛡️ RIX COMMAND</h3>
-    <button onclick="logout()" style="background:#333; color:white; border:none; padding:5px 10px; border-radius:8px; font-size:10px;">EXIT</button>
+<div id="adminPanel">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+    <span style="font-weight:900; color:var(--primary); font-size:14px;">🛡️ RIX COMMAND CENTER</span>
+    <button onclick="exitAdmin()" style="background:#222; color:#fff; border:none; padding:8px 16px; border-radius:10px; font-size:11px; font-weight:700;">LOGOUT</button>
   </div>
-  <div class="stat-grid">
-    <div class="stat-box"><small>Total Units</small><div id="sTotal">0</div></div>
-    <div class="stat-box"><small>Revenue</small><div id="sRev" style="color:var(--green)">₹0</div></div>
-    <div class="stat-box"><small>Unpaid</small><div id="sUnpaid" style="color:var(--gold)">0</div></div>
-    <div class="stat-box"><small>Expired</small><div id="sExp" style="color:var(--red)">0</div></div>
+  <div class="stat-row">
+    <div class="stat-card"><small>Network Size</small><div id="adm-total">0</div></div>
+    <div class="stat-card"><small>Revenue Pool</small><div id="adm-rev" style="color:var(--green)">₹0</div></div>
+    <div class="stat-card"><small>Unpaid Units</small><div id="adm-unpaid" style="color:var(--gold)">0</div></div>
+    <div class="stat-card"><small>Expired</small><div id="adm-exp" style="color:var(--red)">0</div></div>
   </div>
 </div>
 
 <header>
   <h1>RIX</h1>
-  <div class="subtitle">RAEBARELI INDUSTRIAL EXCHANGE</div>
+  <div class="subtitle">Raebareli Industrial Exchange</div>
 </header>
 
 <div class="controls">
-  <input type="text" id="searchInput" placeholder="Search factory, area, or category..." oninput="search(this.value)">
-  <select id="catFilter" onchange="filterCategory(this.value)">
-    <option value="">All Categories</option>
+  <input type="text" id="search" placeholder="Search factory, area, or material..." oninput="app.search(this.value)">
+  <select id="catFilter" onchange="app.filter(this.value)">
+    <option value="">All Industrial Sectors</option>
   </select>
 </div>
 
 <main id="feed">
-  <div class="loader">ESTABLISHING SECURE CONNECTION...</div>
+  <div class="loading-state">SYNCHRONIZING SECURE DATABASE...</div>
 </main>
 
 <nav>
-  <div class="nav-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})" style="filter:none">🏠</div>
-  <a href="https://wa.me/918146518503?text=Add%20My%20Business" style="background:var(--primary); color:white; width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; text-decoration:none; margin-top:-45px; border:6px solid var(--bg); font-weight:800; font-size:28px;">+</a>
-  <div class="nav-btn" onclick="shareApp()" style="filter:none">📤</div>
-  <div class="nav-btn" onclick="adminLogin()" style="filter:none">🛡️</div>
+  <div class="nav-icon" onclick="window.scrollTo({top:0, behavior:'smooth'})">🏠</div>
+  <a href="https://wa.me/918146518503?text=Register%20Business%20on%20RIX" class="nav-fab">+</a>
+  <div class="nav-icon" onclick="app.share()">📤</div>
+  <div class="nav-icon" onclick="app.login()">🛡️</div>
 </nav>
 
 <script>
-// 1. CONFIGURATION
-const SHEET_URL = "PASTE_YOUR_CSV_LINK_HERE";
-const ADMIN_HASH = "86493664790089e9d6d87f7390ba038c82306716a50682701df93f0b2403251e"; // 'cutipie of ninth class'
+/**
+ * RIX MASTER ENGINE v10.0
+ * Security: SHA-256
+ * Database: Google Sheets (CSV)
+ * Architecture: PWA Ready
+ */
 
-let DB = [], VIEW = [], isAdmin = false;
+const CONFIG = {
+  sheet: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv",
+  hash: "86493664790089e9d6d87f7390ba038c82306716a50682701df93f0b2403251e" // Password: cutipie of ninth class
+};
 
-// 2. DATA CORE
-async function init() {
-  // Try to load from cache first for offline speed
-  const cached = localStorage.getItem('rix_data');
-  if(cached) {
-    DB = JSON.parse(cached);
-    VIEW = [...DB];
-    render();
-    buildFilters();
-  }
+let rawData = [], activeData = [], isAdmin = false;
 
-  // Always fetch fresh data if online
-  Papa.parse(SHEET_URL, {
-    download: true, header: true,
-    complete: r => {
-      DB = r.data.filter(x => x["Shop name"]);
-      localStorage.setItem('rix_data', JSON.stringify(DB));
-      VIEW = [...DB];
-      render();
-      buildFilters();
+const app = {
+  init: async () => {
+    // Load from local storage for instant start
+    const cache = localStorage.getItem('rix_db_cache');
+    if(cache) {
+      rawData = JSON.parse(cache);
+      app.boot();
     }
-  });
-}
 
-function buildFilters() {
-  const sel = document.getElementById("catFilter");
-  const cats = [...new Set(DB.map(x => x.Category))];
-  sel.innerHTML = '<option value="">All Categories</option>' + 
-    cats.map(c => `<option value="${c}">${c}</option>`).join('');
-}
+    // Fetch live data
+    Papa.parse(CONFIG.sheet, {
+      download: true, header: true,
+      complete: (results) => {
+        rawData = results.data.filter(r => r["Shop name"]);
+        localStorage.setItem('rix_db_cache', JSON.stringify(rawData));
+        app.boot();
+      }
+    });
+  },
 
-function search(q) {
-  q = q.toLowerCase();
-  VIEW = DB.filter(x => 
-    x["Shop name"].toLowerCase().includes(q) || 
-    x.Category.toLowerCase().includes(q) || 
-    x.Location.toLowerCase().includes(q)
-  );
-  render();
-}
+  boot: () => {
+    activeData = [...rawData];
+    app.renderFilters();
+    app.render();
+  },
 
-function filterCategory(c) {
-  VIEW = c ? DB.filter(x => x.Category === c) : DB;
-  render();
-}
+  renderFilters: () => {
+    const sel = document.getElementById('catFilter');
+    const cats = [...new Set(rawData.map(x => x.Category))];
+    sel.innerHTML = '<option value="">All Industrial Sectors</option>' + 
+      cats.map(c => `<option value="${c}">${c}</option>`).join('');
+  },
 
-// 3. RENDER ENGINE
-function render() {
-  const container = document.getElementById("feed");
-  if(VIEW.length === 0) { container.innerHTML = '<div class="loader">No results found.</div>'; return; }
+  search: (val) => {
+    const q = val.toLowerCase();
+    activeData = rawData.filter(x => 
+      x["Shop name"].toLowerCase().includes(q) || 
+      x.Category.toLowerCase().includes(q) || 
+      x.Location.toLowerCase().includes(q)
+    );
+    app.render();
+  },
 
-  container.innerHTML = VIEW.map(x => {
-    const isPaid = x.PaymentStatus === "paid";
-    const isPrem = x.Premium === "yes" && isPaid;
-    const wa = `https://wa.me/91${x["Phone No."].replace(/\D/g,'')}?text=Hi, I saw your factory on RIX. I want to inquire about your services.`;
+  filter: (cat) => {
+    activeData = cat ? rawData.filter(x => x.Category === cat) : rawData;
+    app.render();
+  },
 
-    const adminInfo = isAdmin ? `
-      <div class="admin-row">
-        AGENT: ${x.AgentID || 'Direct'} | COM: ₹${x.AgentCommission || 0} | PAID: ${x.PaymentStatus}
-      </div>` : '';
+  render: () => {
+    const list = document.getElementById('feed');
+    if(activeData.length === 0) { list.innerHTML = '<div class="loading-state">No businesses found in this category.</div>'; return; }
 
-    return `
-      <div class="card ${isPrem ? 'premium' : ''}">
-        <div class="title">${x["Shop name"]}</div>
-        <div class="loc">📍 ${x.Location}, ${x.City || 'Raebareli'}</div>
-        <div class="tags">
-          <span class="tag">${x.Category}</span>
-          ${x.Verified === "yes" ? '<span class="tag ver">VERIFIED ✓</span>' : ''}
-          <span class="tag">⭐ ${x.Rating || 'New'}</span>
+    list.innerHTML = activeData.map(item => {
+      const isPaid = item.PaymentStatus === 'paid';
+      const isPrem = item.Premium === 'yes' && isPaid;
+      const waLink = `https://wa.me/91${item["Phone No."].replace(/\D/g,'')}?text=I%20saw%20${encodeURIComponent(item["Shop name"])}%20on%20RIX.%20Please%20send%20details.`;
+
+      let adminView = '';
+      if(isAdmin) {
+        adminView = `
+          <div class="admin-data-line">
+            ID: ${item.ShopID} | AGENT: ${item.AgentID || 'None'} | REV: ₹${item.AgentCommission || 0} | STATUS: ${item.PaymentStatus}
+          </div>
+        `;
+      }
+
+      return `
+        <div class="card ${isPrem ? 'premium' : ''}">
+          <div class="c-name">${item["Shop name"]}</div>
+          <div class="c-loc">📍 ${item.Location}, ${item.City}</div>
+          
+          <div class="tag-cloud">
+            <span class="tag">${item.Category}</span>
+            ${item.Verified === 'yes' ? '<span class="tag ver">VERIFIED ✓</span>' : ''}
+            <span class="tag">⭐ ${item.Rating || 'New'}</span>
+          </div>
+
+          <div class="actions">
+            <a href="tel:${item["Phone No."]}" class="btn btn-call">CALL UNIT</a>
+            <a href="${waLink}" class="btn btn-wa">WHATSAPP</a>
+          </div>
+          ${adminView}
         </div>
-        <div class="actions">
-          <a class="btn call" href="tel:${x["Phone No."]}">📞 CALL</a>
-          <a class="btn wa" href="${wa}">💬 WHATSAPP</a>
-        </div>
-        ${adminInfo}
-      </div>
-    `;
-  }).join('');
+      `;
+    }).join('');
 
-  if(isAdmin) updateAdminStats();
-}
+    if(isAdmin) app.updateStats();
+  },
 
-// 4. SECURITY & ADMIN
-async function adminLogin() {
-  if(isAdmin) return;
-  const p = prompt("ENTER SYSTEM PASSWORD:");
-  if(!p) return;
-  
-  const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(p));
-  const hex = [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("");
-  
-  if(hex === ADMIN_HASH) {
-    isAdmin = true;
-    document.getElementById("adminPanel").style.display = "block";
-    render();
-    alert("SYSTEM UNLOCKED");
-  } else {
-    alert("ACCESS DENIED");
+  login: async () => {
+    if(isAdmin) return;
+    const p = prompt("AUTHORIZATION REQUIRED:");
+    if(!p) return;
+
+    const msgBuffer = new TextEncoder().encode(p);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    if(hex === CONFIG.hash) {
+      isAdmin = true;
+      document.getElementById('adminPanel').style.display = 'block';
+      app.render();
+      alert("SYSTEM ACCESS GRANTED");
+    } else {
+      alert("INVALID CREDENTIALS");
+    }
+  },
+
+  updateStats: () => {
+    document.getElementById('adm-total').innerText = rawData.length;
+    const rev = rawData.reduce((s, x) => s + (Number(x.AgentCommission) || 0), 0);
+    document.getElementById('adm-rev').innerText = "₹" + rev;
+    document.getElementById('adm-unpaid').innerText = rawData.filter(x => x.PaymentStatus !== 'paid').length;
+    document.getElementById('adm-exp').innerText = rawData.filter(x => x.Premium === 'expired').length;
+  },
+
+  share: () => {
+    if(navigator.share) {
+      navigator.share({ title: "RIX Network", url: window.location.href });
+    } else {
+      alert("App Link: " + window.location.href);
+    }
   }
-}
+};
 
-function updateAdminStats() {
-  document.getElementById("sTotal").innerText = DB.length;
-  const revenue = DB.reduce((sum, x) => sum + (Number(x.AgentCommission) || 0), 0);
-  document.getElementById("sRev").innerText = "₹" + revenue;
-  document.getElementById("sUnpaid").innerText = DB.filter(x => x.PaymentStatus !== 'paid').length;
-  document.getElementById("sExp").innerText = DB.filter(x => x.Premium === 'expired').length;
-}
-
-function logout() {
+function exitAdmin() {
   isAdmin = false;
-  document.getElementById("adminPanel").style.display = "none";
-  render();
+  document.getElementById('adminPanel').style.display = 'none';
+  app.render();
 }
 
-function shareApp() {
-  if(navigator.share) {
-    navigator.share({ title: "RIX Raebareli", url: window.location.href });
-  } else {
-    alert("App Link: " + window.location.href);
-  }
-}
-
-// 5. PWA OFFLINE ENGINE
+// Service Worker for Offline Mode
 if ('serviceWorker' in navigator) {
-  const sw = `
-    const C = 'rix-v2';
-    self.addEventListener('install', e => e.waitUntil(caches.open(C).then(c => c.addAll(['./']))));
-    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-  `;
-  const b = new Blob([sw], {type: 'application/javascript'});
-  navigator.serviceWorker.register(URL.createObjectURL(b));
+  const code = `const C='rix-v10';self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(['./']))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
+  const blob = new Blob([code], {type: 'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob));
 }
 
-init();
+app.init();
 </script>
 </body>
 </html>
