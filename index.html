@@ -1,430 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>RIX — Raebareli Industrial Network</title>
-<meta name="description" content="Independent Industrial Business Network — controlled by Google Sheet" />
-<meta name="theme-color" content="#020617" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>RIX | Raebareli Industrial Exchange</title>
 
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
-
-<!-- PapaParse (robust CSV) -->
-<script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
 :root{
-  --bg:#020617; --surface:#0f172a; --surface-2:#1e293b;
-  --border:rgba(255,255,255,.08); --text:#f8fafc; --muted:#94a3b8;
-  --primary:#3b82f6; --gold:#fbbf24; --green:#10b981; --danger:#ef4444;
-  --glass:rgba(15,23,42,.8); --radius:18px; --shadow:0 20px 40px rgba(0,0,0,.5);
-  --max-width:1100px;
+  --bg:#020617; --card:#0f172a; --text:#f8fafc; --muted:#94a3b8;
+  --border:rgba(255,255,255,.08); --primary:#3b82f6; --gold:#fbbf24; --green:#10b981;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:'Plus Jakarta Sans',system-ui,-apple-system; background:var(--bg); color:var(--text);
-  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; padding-bottom:140px;
-}
-.container{max-width:var(--max-width);margin:0 auto}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+body{ margin:0; background:var(--bg); color:var(--text); font-family:'Plus Jakarta Sans',sans-serif; padding-bottom:100px; }
 
-/* Header */
-.header{
-  padding:90px 20px 110px; text-align:center; border-bottom:1px solid var(--border);
-  background:radial-gradient(circle at top right,#1e3a8a,transparent 60%), linear-gradient(180deg,#020617,#0f172a);
-}
-.header .badge{display:inline-block;background:rgba(59,130,246,.08); color:var(--primary); padding:8px 18px; border-radius:999px; font-weight:800; font-size:12px; letter-spacing:2px}
-.header h1{font-size:54px;margin-top:14px;font-weight:800}
-.header p{color:var(--muted);margin-top:10px;font-weight:700;letter-spacing:3px;font-size:12px}
+header{ text-align:center; padding:60px 16px 30px; background:radial-gradient(circle at top right, #172554 0%, #020617 100%); border-bottom:1px solid var(--border); }
+h1{font-size:48px; font-weight:800; margin:0; letter-spacing:-2px;}
+.subtitle{color:var(--muted); font-size:12px; letter-spacing:2px; font-weight:700; margin-top:5px;}
 
-/* Stats */
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 20px;margin-top:-50px}
-@media(min-width:800px){.stats{grid-template-columns:repeat(4,1fr)}}
-.stat{background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;box-shadow:var(--shadow)}
-.stat strong{display:block;font-family:'JetBrains Mono',monospace;font-size:28px}
+.controls{ position:sticky; top:0; z-index:100; background:rgba(2, 6, 23, 0.9); backdrop-filter:blur(15px); padding:15px; border-bottom:1px solid var(--border); }
+input, select{ width:100%; padding:14px; border-radius:14px; border:1px solid var(--border); background:var(--card); color:white; margin-bottom:10px; font-size:16px; font-weight:600; }
 
-/* Controls */
-.controls{padding:28px 20px 6px}
-.search{display:flex;gap:12px;max-width:var(--max-width);margin:0 auto}
-.search input{flex:1;padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-weight:600}
-.btn{padding:12px 14px;border-radius:12px;background:var(--primary);color:#fff;font-weight:800;border:none;cursor:pointer}
-.small{padding:10px 12px;font-size:13px}
-.filters{display:flex;gap:10px;overflow:auto;padding:14px 20px;max-width:var(--max-width);margin:0 auto}
-.chip{padding:10px 16px;border-radius:999px;background:var(--surface);border:1px solid var(--border);font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap}
-.chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+#feed{ max-width:800px; margin:auto; padding:16px; display:grid; gap:16px; }
+.card{ background:var(--card); border:1px solid var(--border); border-radius:24px; padding:24px; position:relative; overflow:hidden; }
+.card.premium{ border:1px solid var(--gold); box-shadow:0 0 20px rgba(251,191,36,0.1); }
+.card.premium::after{ content:'PREMIUM'; position:absolute; top:0; right:0; background:var(--gold); color:#000; font-size:9px; font-weight:900; padding:4px 12px; border-bottom-left-radius:12px; }
 
-/* List */
-#list{padding:20px;display:grid;gap:20px;max-width:var(--max-width);margin:0 auto}
-@media(min-width:900px){#list{grid-template-columns:repeat(2,1fr)}}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:28px;padding:26px;position:relative;overflow:hidden;transition:transform .25s}
-.card:hover{transform:translateY(-6px)}
-.card.premium{border:2px solid var(--gold);background:linear-gradient(145deg,#1e293b,#020617)}
-.card .tag-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
-.tag{font-size:11px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--muted);font-weight:800}
-.tag.verified{color:var(--green);border-color:var(--green);background:rgba(16,185,129,.06)}
-.tag.expired{color:var(--danger);border-color:var(--danger);background:rgba(239,68,68,.06)}
-.title{font-size:22px;font-weight:800;display:flex;align-items:center;gap:10px}
-.loc{color:var(--muted);font-size:13px;margin-top:6px}
-.rating{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.18);padding:12px;border-radius:12px;margin-top:12px}
-.stars{color:var(--gold);font-weight:900}
-.actions{display:grid;grid-template-columns:1fr 64px;gap:10px;margin-top:14px}
-.call{background:var(--primary);color:#fff;padding:12px;border-radius:12px;text-align:center;font-weight:800}
-.wa{background:#25d366;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff}
+.title{font-size:22px; font-weight:800; margin-bottom:4px;}
+.loc{font-size:14px; color:var(--muted); margin-bottom:15px; display:flex; align-items:center; gap:5px;}
+.tags{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px;}
+.tag{ font-size:11px; padding:5px 12px; border-radius:8px; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--muted); font-weight:600; }
+.tag.ver{color:var(--green); border-color:rgba(16,185,129,.3); background:rgba(16,185,129,0.05);}
 
-/* Admin small */
-.admin-box{margin-top:14px;padding:12px;border-radius:10px;background:rgba(0,0,0,.25);border:1px dashed var(--border);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-.hidden{display:none}
+.actions{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.btn{ padding:15px; border-radius:14px; text-align:center; text-decoration:none; font-weight:800; font-size:14px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+.call{background:#1e293b; color:white; border:1px solid var(--border);}
+.wa{background:var(--primary); color:white;}
 
-/* Nav */
-nav{position:fixed;left:20px;right:20px;bottom:24px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:40px;padding:12px 18px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 30px 60px rgba(0,0,0,.6)}
-nav a{color:var(--muted);font-weight:800;font-size:12px;text-decoration:none}
-.add-btn{background:var(--primary);width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;margin-top:-36px;border:8px solid var(--bg)}
-.loader{height:180px;background:linear-gradient(90deg,#0f172a 25%,#1e293b 50%,#0f172a 75%);border-radius:22px;animation:shimmer 1.8s linear infinite;background-size:1200px 100%}
-.footer-note{max-width:var(--max-width);margin:34px auto;color:var(--muted);font-size:12px;padding:0 20px;text-align:center}
+.admin-panel{ display:none; background:#000; padding:20px; border-bottom:2px solid var(--primary); }
+.stat-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; }
+.stat-box{ background:#111; padding:15px; border-radius:15px; border:1px solid #333; }
+.stat-box small{ font-size:10px; color:#666; text-transform:uppercase; }
+.stat-box div{ font-size:24px; font-weight:800; margin-top:5px; }
+.admin-row{ font-family:monospace; font-size:11px; color:var(--muted); margin-top:15px; padding-top:10px; border-top:1px dashed #333; }
+
+nav{ position:fixed; bottom:20px; left:20px; right:20px; background:rgba(15, 23, 42, 0.9); backdrop-filter:blur(20px); border:1px solid var(--border); border-radius:25px; display:flex; justify-content:space-around; align-items:center; padding:15px; z-index:2000; box-shadow:0 10px 40px rgba(0,0,0,0.5); }
+.nav-btn{ font-size:24px; cursor:pointer; filter:grayscale(1); transition:0.2s; }
+.nav-btn:active{ transform:scale(0.9); }
+
+.loader { text-align:center; padding:50px; color:var(--muted); }
 </style>
 </head>
 <body>
-  <div class="container header">
-    <div class="badge">Independent Hub 2026</div>
-    <h1>RIX</h1>
-    <p>Raebareli Industrial Network</p>
+
+<div class="admin-panel" id="adminPanel">
+  <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+    <h3 style="margin:0; color:var(--primary)">🛡️ RIX COMMAND</h3>
+    <button onclick="logout()" style="background:#333; color:white; border:none; padding:5px 10px; border-radius:8px; font-size:10px;">EXIT</button>
   </div>
-
-  <div class="container stats" aria-hidden="false">
-    <div class="stat"><strong id="totalCount">0</strong><span>Total Units</span></div>
-    <div class="stat"><strong id="verifiedCount">0</strong><span>Verified</span></div>
-    <div class="stat"><strong id="premiumCount">0</strong><span>Premium (paid)</span></div>
-    <div class="stat"><strong id="cityCount">0</strong><span>Hubs/Cities</span></div>
+  <div class="stat-grid">
+    <div class="stat-box"><small>Total Units</small><div id="sTotal">0</div></div>
+    <div class="stat-box"><small>Revenue</small><div id="sRev" style="color:var(--green)">₹0</div></div>
+    <div class="stat-box"><small>Unpaid</small><div id="sUnpaid" style="color:var(--gold)">0</div></div>
+    <div class="stat-box"><small>Expired</small><div id="sExp" style="color:var(--red)">0</div></div>
   </div>
+</div>
 
-  <div class="controls">
-    <div class="search container" style="align-items:center;margin-bottom:6px">
-      <input id="searchInput" placeholder="Search shop, category, industry, or city..." onkeyup="searchEngine(this.value)" />
-      <button class="btn small" id="refreshBtn" title="Refresh data">Refresh</button>
-      <button class="btn small" id="adminToggle" title="Show admin (#admin)">Admin</button>
-    </div>
-    <div class="filters" id="cityFilters"></div>
-  </div>
+<header>
+  <h1>RIX</h1>
+  <div class="subtitle">RAEBARELI INDUSTRIAL EXCHANGE</div>
+</header>
 
-  <main id="list" class="container">
-    <div class="loader"></div><div class="loader"></div><div class="loader"></div>
-  </main>
+<div class="controls">
+  <input type="text" id="searchInput" placeholder="Search factory, area, or category..." oninput="search(this.value)">
+  <select id="catFilter" onchange="filterCategory(this.value)">
+    <option value="">All Categories</option>
+  </select>
+</div>
 
-  <div class="container footer-note">Tip: Edit the Google Sheet to update listings. Use <code>#admin</code> or <code>?admin=1</code> in the URL to view admin info (agent & payments).</div>
+<main id="feed">
+  <div class="loader">ESTABLISHING SECURE CONNECTION...</div>
+</main>
 
-  <nav>
-    <a href="#" class="active">🏠 Directory</a>
-    <a class="add-btn" href="https://wa.me/918146518503?text=Add%20Business%20To%20RIX">＋</a>
-    <a href="https://wa.me/918146518503?text=RIX%20Support">🛡️ Support</a>
-  </nav>
+<nav>
+  <div class="nav-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})" style="filter:none">🏠</div>
+  <a href="https://wa.me/918146518503?text=Add%20My%20Business" style="background:var(--primary); color:white; width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; text-decoration:none; margin-top:-45px; border:6px solid var(--bg); font-weight:800; font-size:28px;">+</a>
+  <div class="nav-btn" onclick="shareApp()" style="filter:none">📤</div>
+  <div class="nav-btn" onclick="adminLogin()" style="filter:none">🛡️</div>
+</nav>
 
 <script>
-/* ========== CONFIG ========== */
-/* Replace this with your published Google Sheet CSV URL */
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
+// 1. CONFIGURATION
+const SHEET_URL = "PASTE_YOUR_CSV_LINK_HERE";
+const ADMIN_HASH = "86493664790089e9d6d87f7390ba038c82306716a50682701df93f0b2403251e"; // 'cutipie of ninth class'
 
-/* Admin reveal: #admin OR ?admin=1 */
-const isAdmin = (() => {
-  try {
-    const h = location.hash.replace('#','');
-    const p = new URLSearchParams(location.search);
-    return (h === 'admin') || (p.get('admin') === '1');
-  } catch(e){ return false; }
-})();
+let DB = [], VIEW = [], isAdmin = false;
 
-/* State */
-let db = [], view = [], currentCity = 'All';
-
-/* Utility: safe access */
-const s = v => (v || "").toString().trim();
-const num = v => (v === undefined || v === null || v === '') ? 0 : Number(v);
-
-/* sanitize phone digits */
-function sanitizePhone(p) {
-  if(!p) return "";
-  const digits = p.toString().replace(/\D/g,'');
-  // ensure 10-digit fallback
-  if(digits.length === 10) return digits;
-  if(digits.length > 10 && digits.startsWith('91')) return digits.slice(-10);
-  return digits;
-}
-
-/* create dynamic manifest so PWA install works without extra file */
-(function makeManifest(){
-  const manifest = {
-    "name":"RIX — Industrial Directory",
-    "short_name":"RIX",
-    "start_url":".",
-    "display":"standalone",
-    "background_color":"#020617",
-    "theme_color":"#020617",
-    "icons":[{"src":"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='24' fill='%233b82f6'/%3E%3Ctext x='50%' y='54%' dominant-baseline='middle' text-anchor='middle' font-size='60' font-family='Arial' fill='white'>R</text%3E%3C/svg%3E","sizes":"120x120","type":"image/svg+xml"}]
-  };
-  const blob = new Blob([JSON.stringify(manifest)],{type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('link');
-  link.rel = 'manifest'; link.href = url;
-  document.head.appendChild(link);
-})();
-
-/* ========== LOAD DATA (PapaParse) ========== */
-function fetchAndParse() {
-  return new Promise((resolve, reject) => {
-    Papa.parse(SHEET_URL, {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: results => resolve(results.data),
-      error: err => reject(err)
-    });
-  });
-}
-
-/* bootstrap */
-async function boot(tryCached=true){
-  try {
-    const data = await fetchAndParse();
-    // normalize: keep only rows with ShopID or Shop name
-    db = data.filter(r => s(r.ShopID) || s(r["Shop name"]));
-    localStorage.setItem('rix_db_v1', JSON.stringify(db));
-    postBoot();
-    console.log('RIX: data loaded from sheet', db.length, new Date().toISOString());
-  } catch (err) {
-    console.warn('RIX: fetch failed, loading cache', err);
-    const cache = localStorage.getItem('rix_db_v1');
-    db = cache ? JSON.parse(cache) : [];
-    postBoot();
+// 2. DATA CORE
+async function init() {
+  // Try to load from cache first for offline speed
+  const cached = localStorage.getItem('rix_data');
+  if(cached) {
+    DB = JSON.parse(cached);
+    VIEW = [...DB];
+    render();
+    buildFilters();
   }
-}
 
-/* call boot now */
-boot();
-
-/* manual refresh */
-document.getElementById('refreshBtn').addEventListener('click', ()=>{
-  document.getElementById('refreshBtn').disabled = true;
-  document.getElementById('refreshBtn').innerText = 'Refreshing...';
-  boot().finally(()=>{ document.getElementById('refreshBtn').disabled = false; document.getElementById('refreshBtn').innerText = 'Refresh'; });
-});
-
-/* admin toggle (convenience) */
-document.getElementById('adminToggle').addEventListener('click', ()=>{
-  location.hash = (location.hash === '#admin') ? '' : '#admin';
-  location.reload();
-});
-
-/* post-boot logic */
-function postBoot(){
-  sanitizeAndNormalize();
-  applyPremiumExpiry();
-  renderStats();
-  renderCityChips();
-  view = [...db];
-  renderDirectory();
-  // analytics hook
-  console.log('RIX_VIEW', {count: db.length, time: new Date().toISOString()});
-}
-
-/* ensure consistent shapes and defaults */
-function sanitizeAndNormalize(){
-  db = db.map((r, idx) => {
-    // ensure required columns exist with safe values
-    return {
-      ShopID: s(r.ShopID) || ('RIX-' + (idx+1).toString().padStart(4,'0')),
-      "Shop name": s(r["Shop name"]) || '',
-      Category: s(r.Category) || 'Industrial',
-      Industry: s(r.Industry) || '',
-      Size: s(r.Size) || '',
-      Location: s(r.Location) || '',
-      City: s(r.City) || 'Raebareli',
-      "Phone No.": s(r["Phone No."]) || '',
-      Verified: s(r.Verified).toLowerCase() === 'yes' ? 'yes' : '',
-      Premium: s(r.Premium).toLowerCase() === 'yes' ? 'yes' : '',
-      PremiumExpiry: s(r.PremiumExpiry) || '',
-      Rating: (r.Rating === undefined || r.Rating === '') ? 0 : Number(r.Rating),
-      Reviews: (r.Reviews === undefined || r.Reviews === '') ? 0 : Number(r.Reviews),
-      AgentID: s(r.AgentID) || '',
-      AgentCommission: num(r.AgentCommission),
-      PaymentStatus: s(r.PaymentStatus).toLowerCase() || '' // expected 'paid' or 'pending'
-    };
-  });
-}
-
-/* expiry processing & premium validity (considers PaymentStatus) */
-function applyPremiumExpiry(){
-  const now = new Date();
-  db.forEach(item => {
-    // if premium flagged
-    if(item.Premium === 'yes') {
-      // payment required for premium to be 'active'
-      if(item.PaymentStatus !== 'paid') {
-        item._premiumState = 'pending'; // awaiting payment
-      } else if(item.PremiumExpiry) {
-        const expiry = new Date(item.PremiumExpiry + 'T23:59:59');
-        if(expiry < now) {
-          item._premiumState = 'expired';
-        } else {
-          item._premiumState = 'active';
-          // compute days left
-          item._daysLeft = Math.ceil((expiry - now) / (1000*60*60*24));
-        }
-      } else {
-        // no expiry date -> treat as active if paid
-        item._premiumState = (item.PaymentStatus === 'paid') ? 'active' : 'pending';
-      }
-    } else {
-      item._premiumState = 'none';
+  // Always fetch fresh data if online
+  Papa.parse(SHEET_URL, {
+    download: true, header: true,
+    complete: r => {
+      DB = r.data.filter(x => x["Shop name"]);
+      localStorage.setItem('rix_data', JSON.stringify(DB));
+      VIEW = [...DB];
+      render();
+      buildFilters();
     }
   });
 }
 
-/* stats */
-function renderStats(){
-  const total = db.length;
-  const verified = db.filter(x => x.Verified === 'yes').length;
-  const premiumActive = db.filter(x => x._premiumState === 'active').length;
-  const cities = new Set(db.map(x => x.City));
-  document.getElementById('totalCount').textContent = total;
-  document.getElementById('verifiedCount').textContent = verified;
-  document.getElementById('premiumCount').textContent = premiumActive;
-  document.getElementById('cityCount').textContent = cities.size;
+function buildFilters() {
+  const sel = document.getElementById("catFilter");
+  const cats = [...new Set(DB.map(x => x.Category))];
+  sel.innerHTML = '<option value="">All Categories</option>' + 
+    cats.map(c => `<option value="${c}">${c}</option>`).join('');
 }
 
-/* city filter chips */
-function renderCityChips(){
-  const cities = ['All', ...Array.from(new Set(db.map(x => x.City)))];
-  const root = document.getElementById('cityFilters');
-  root.innerHTML = cities.map(c => `<div class="chip ${c===currentCity ? 'active' : ''}" onclick="selectCity('${escapeHtml(c)}')">${escapeHtml(c)}</div>`).join('');
+function search(q) {
+  q = q.toLowerCase();
+  VIEW = DB.filter(x => 
+    x["Shop name"].toLowerCase().includes(q) || 
+    x.Category.toLowerCase().includes(q) || 
+    x.Location.toLowerCase().includes(q)
+  );
+  render();
 }
 
-/* select city */
-function selectCity(c){
-  currentCity = c;
-  // reapply search filter using current query
-  const q = document.getElementById('searchInput').value || '';
-  searchEngine(q);
-  renderCityChips();
+function filterCategory(c) {
+  VIEW = c ? DB.filter(x => x.Category === c) : DB;
+  render();
 }
 
-/* escape helper (simple) */
-function escapeHtml(str){ return (str||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+// 3. RENDER ENGINE
+function render() {
+  const container = document.getElementById("feed");
+  if(VIEW.length === 0) { container.innerHTML = '<div class="loader">No results found.</div>'; return; }
 
-/* search & filter */
-function searchEngine(q){
-  q = (q || '').toString().toLowerCase().trim();
-  view = db.filter(item => {
-    const cityMatch = (currentCity === 'All' || item.City === currentCity);
-    if(!cityMatch) return false;
-    // safe fields
-    const hay = (item["Shop name"] + ' ' + item.Category + ' ' + item.Industry + ' ' + item.Location + ' ' + item.City).toLowerCase();
-    return hay.includes(q);
-  });
-  renderDirectory();
-}
+  container.innerHTML = VIEW.map(x => {
+    const isPaid = x.PaymentStatus === "paid";
+    const isPrem = x.Premium === "yes" && isPaid;
+    const wa = `https://wa.me/91${x["Phone No."].replace(/\D/g,'')}?text=Hi, I saw your factory on RIX. I want to inquire about your services.`;
 
-/* priority: active premium (paid) > none > pending > expired (lowest) */
-function priorityScore(item){
-  if(item._premiumState === 'active') return 3;
-  if(item._premiumState === 'none') return 2;
-  if(item._premiumState === 'pending') return 1;
-  if(item._premiumState === 'expired') return 0;
-  return 2;
-}
-
-/* generate stars safely */
-function generateStars(n){
-  const r = Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
-  return '★'.repeat(r) + '☆'.repeat(5 - r);
-}
-
-/* safe phone link builder */
-function phoneLink(phone){
-  const d = sanitizePhone(phone);
-  if(!d) return '#';
-  return `tel:${d.length===10 ? d : '+91' + d}`;
-}
-function waLink(phone, shop){
-  const d = sanitizePhone(phone);
-  const text = encodeURIComponent(`Inquiry via RIX for ${shop}`);
-  if(!d) return `https://wa.me/?text=${text}`;
-  // ensure international format for wa.me: use country code (91) + number without plus
-  const full = (d.length===10) ? ('91' + d) : d;
-  return `https://wa.me/${full}?text=${text}`;
-}
-
-/* render directory */
-function renderDirectory(){
-  const root = document.getElementById('list');
-  if(!view || view.length === 0){
-    root.innerHTML = `<div style="text-align:center;padding:80px 20px;color:var(--muted)">No businesses found.</div>`;
-    return;
-  }
-
-  // non-destructive sort
-  const sorted = [...view].sort((a,b) => priorityScore(b) - priorityScore(a));
-
-  root.innerHTML = sorted.map(item => {
-    const premiumBadge = (item._premiumState === 'active') ? '💎' : '';
-    const premiumClass = (item._premiumState === 'active') ? 'premium' : '';
-    const verifiedTag = item.Verified === 'yes' ? `<span class="tag verified">Verified ✓</span>` : '';
-    const expiredTag = item._premiumState === 'expired' ? `<span class="tag expired">Expired</span>` : '';
-    const pendingTag = item._premiumState === 'pending' ? `<span class="tag">Pending Payment</span>` : '';
-    const daysLeft = item._premiumState === 'active' && item._daysLeft ? `<span class="tag">Ends in ${item._daysLeft}d</span>` : '';
-    const rating = Number(item.Rating) || 0;
-    const reviews = Number(item.Reviews) || 0;
-
-    // admin info visibility
-    const adminHtml = (isAdmin && item.AgentID) ? `
-      <div class="admin-box">
-        AGENT: ${escapeHtml(item.AgentID)} · COMMISSION: ₹${escapeHtml(String(item.AgentCommission || 0))} · PAYMENT: ${escapeHtml(item.PaymentStatus || 'pending')}
-      </div>
-    ` : '';
+    const adminInfo = isAdmin ? `
+      <div class="admin-row">
+        AGENT: ${x.AgentID || 'Direct'} | COM: ₹${x.AgentCommission || 0} | PAID: ${x.PaymentStatus}
+      </div>` : '';
 
     return `
-      <div class="card ${premiumClass}">
-        <div class="title">${escapeHtml(item["Shop name"])} ${premiumBadge}</div>
-        <div class="loc">📍 ${escapeHtml(item.Location)} • ${escapeHtml(item.City)}</div>
-
-        <div class="tag-row">
-          <div class="tag">${escapeHtml(item.Category)}</div>
-          <div class="tag">${escapeHtml(item.Industry || 'General')}</div>
-          ${verifiedTag}
-          ${daysLeft}${expiredTag}${pendingTag}
+      <div class="card ${isPrem ? 'premium' : ''}">
+        <div class="title">${x["Shop name"]}</div>
+        <div class="loc">📍 ${x.Location}, ${x.City || 'Raebareli'}</div>
+        <div class="tags">
+          <span class="tag">${x.Category}</span>
+          ${x.Verified === "yes" ? '<span class="tag ver">VERIFIED ✓</span>' : ''}
+          <span class="tag">⭐ ${x.Rating || 'New'}</span>
         </div>
-
-        <div class="rating">
-          <div class="stars">${generateStars(rating)}</div>
-          <div class="muted" style="color:var(--muted)">${reviews} reviews</div>
-        </div>
-
         <div class="actions">
-          <a class="call" href="${phoneLink(item["Phone No."])}">CALL</a>
-          <a class="wa" href="${waLink(item["Phone No."], item["Shop name"])}">💬</a>
+          <a class="btn call" href="tel:${x["Phone No."]}">📞 CALL</a>
+          <a class="btn wa" href="${wa}">💬 WHATSAPP</a>
         </div>
-
-        ${adminHtml}
+        ${adminInfo}
       </div>
     `;
   }).join('');
+
+  if(isAdmin) updateAdminStats();
 }
 
-/* Initialize view when data present */
-(function waitForData(){
-  // if db loaded already, postBoot was called; still ensure view/render
-  if(db && db.length) { view = [...db]; renderDirectory(); }
-  // else nothing — boot() will call render when done
-})();
-
-/* Small UX: auto-update expiry countdown every 12h (no background jobs; client-side only) */
-setInterval(()=>{ applyPremiumExpiry(); renderStats(); renderDirectory(); }, 1000 * 60 * 60 * 12);
-
-/* Quick safety: expose a console helper for you (only when admin) */
-if(isAdmin){
-  window.RIX = { db, refresh: ()=>boot(false), view };
-  console.log('RIX admin mode enabled — window.RIX available');
+// 4. SECURITY & ADMIN
+async function adminLogin() {
+  if(isAdmin) return;
+  const p = prompt("ENTER SYSTEM PASSWORD:");
+  if(!p) return;
+  
+  const h = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(p));
+  const hex = [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("");
+  
+  if(hex === ADMIN_HASH) {
+    isAdmin = true;
+    document.getElementById("adminPanel").style.display = "block";
+    render();
+    alert("SYSTEM UNLOCKED");
+  } else {
+    alert("ACCESS DENIED");
+  }
 }
 
-/* end */
+function updateAdminStats() {
+  document.getElementById("sTotal").innerText = DB.length;
+  const revenue = DB.reduce((sum, x) => sum + (Number(x.AgentCommission) || 0), 0);
+  document.getElementById("sRev").innerText = "₹" + revenue;
+  document.getElementById("sUnpaid").innerText = DB.filter(x => x.PaymentStatus !== 'paid').length;
+  document.getElementById("sExp").innerText = DB.filter(x => x.Premium === 'expired').length;
+}
+
+function logout() {
+  isAdmin = false;
+  document.getElementById("adminPanel").style.display = "none";
+  render();
+}
+
+function shareApp() {
+  if(navigator.share) {
+    navigator.share({ title: "RIX Raebareli", url: window.location.href });
+  } else {
+    alert("App Link: " + window.location.href);
+  }
+}
+
+// 5. PWA OFFLINE ENGINE
+if ('serviceWorker' in navigator) {
+  const sw = `
+    const C = 'rix-v2';
+    self.addEventListener('install', e => e.waitUntil(caches.open(C).then(c => c.addAll(['./']))));
+    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+  `;
+  const b = new Blob([sw], {type: 'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(b));
+}
+
+init();
 </script>
 </body>
 </html>
