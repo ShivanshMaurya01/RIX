@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>RIX | Raebareli Industrial Exchange</title>
-
+<title>VOID EMPIRE RIX</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
@@ -21,31 +20,23 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden;
 }
 
-/* --- SPLASH SCREEN --- */
+/* Splash Screen */
 #splash {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: var(--bg); z-index: 9999;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   transition: opacity 0.8s ease;
 }
-.logo-anim {
-  font-size: 72px; font-weight: 800; letter-spacing: -4px;
+.logo-anim { font-size: 72px; font-weight: 800; letter-spacing: -4px;
   background: linear-gradient(to bottom, #fff, #3b82f6);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  animation: pulse 1.5s infinite;
-}
-.loader-bar {
-  width: 120px; height: 4px; background: #111; border-radius: 10px;
-  margin-top: 20px; overflow: hidden;
-}
-.loader-progress {
-  width: 100%; height: 100%; background: var(--primary);
-  animation: load 2s ease-in-out; transform-origin: left;
-}
+  animation: pulse 1.5s infinite; }
+.loader-bar { width: 120px; height: 4px; background: #111; border-radius: 10px; margin-top: 20px; overflow: hidden; }
+.loader-progress { width: 100%; height: 100%; background: var(--primary); animation: load 2s ease-in-out; transform-origin: left; }
 @keyframes pulse { 0% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0.5; transform: scale(0.95); } }
 @keyframes load { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
 
-/* --- MAIN INTERFACE --- */
+/* Main Interface */
 #app-content { opacity: 0; transition: opacity 1s ease; padding-bottom: 120px; }
 header { padding: 60px 24px 30px; text-align: center; border-bottom: 1px solid var(--border); }
 h1 { font-size: 48px; font-weight: 800; margin: 0; letter-spacing: -2px; }
@@ -83,29 +74,36 @@ nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(1
 </head>
 <body>
 
+<!-- Splash Screen -->
 <div id="splash">
   <div class="logo-anim">RIX</div>
-  <div style="font-size: 10px; letter-spacing: 3px; color: var(--muted); margin-top: 5px;">RAEBARELI INDUSTRIAL</div>
+  <div style="font-size: 10px; letter-spacing: 3px; color: var(--muted); margin-top: 5px;">VOID EMPIRE NETWORK</div>
   <div class="loader-bar"><div class="loader-progress"></div></div>
 </div>
 
+<!-- Admin Dashboard -->
 <div id="admin-box">
-  <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><b style="color:var(--primary)">ADMIN COMMAND</b> <button onclick="exitAdm()" style="background:#333;color:#fff;border:none;padding:5px;border-radius:5px">X</button></div>
+  <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+    <b style="color:var(--primary)">ADMIN COMMAND</b> 
+    <button onclick="exitAdm()" style="background:#333;color:#fff;border:none;padding:5px;border-radius:5px">X</button>
+  </div>
   <div class="stat-grid">
     <div class="stat-item"><small>Total Units</small><div id="ad-tot">0</div></div>
-    <div class="stat-item"><small>Total Rev</small><div id="ad-rev" style="color:var(--green)">₹0</div></div>
+    <div class="stat-item"><small>Total Revenue</small><div id="ad-rev" style="color:var(--green)">₹0</div></div>
+    <div class="stat-item"><small>Premium Shops</small><div id="ad-prem">0</div></div>
   </div>
 </div>
 
+<!-- Main App -->
 <div id="app-content">
   <header>
-    <h1>RIX</h1>
-    <div class="subtitle">Secured Industrial Network</div>
+    <h1>VOID EMPIRE RIX</h1>
+    <div class="subtitle">Secured Industrial & Service Network</div>
   </header>
 
   <div class="controls">
-    <input type="text" placeholder="Search factory, area, sector..." oninput="doSearch(this.value)">
-    <select id="catSelect" onchange="doFilter(this.value)"><option value="">All Sectors</option></select>
+    <input type="text" placeholder="Search shop, sector, area..." oninput="doSearch(this.value)">
+    <select id="catSelect" onchange="doFilter(this.value)"><option value="">All Categories</option></select>
   </div>
 
   <main id="feed"></main>
@@ -119,12 +117,13 @@ nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(1
 </div>
 
 <script>
-const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
-const HASH = "0608679d63c5008064436894080183e8784918e7e17042079090b8216c55209c"; // Password: rix786
+// --- CONFIG ---
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
+const ADMIN_HASH = "0608679d63c5008064436894080183e8784918e7e17042079090b8216c55209c"; // password: rix786
 
 let DB = [], VIEW = [], isAdm = false;
 
-// Handle Splash
+// --- SPLASH ---
 window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('splash').style.opacity = '0';
@@ -133,21 +132,23 @@ window.addEventListener('load', () => {
   }, 2000);
 });
 
-async function load() {
-  Papa.parse(URL, {
-    download: true, header: true,
-    complete: r => {
-      DB = r.data.filter(x => x["Shop name"]);
-      VIEW = [...DB];
-      const sel = document.getElementById('catSelect');
-      [...new Set(DB.map(x => x.Category))].forEach(c => {
-        const o = document.createElement('option'); o.value = c; o.text = c; sel.add(o);
-      });
-      render();
-    }
-  });
+// --- LOAD CSV ---
+function loadData() {
+  Papa.parse(CSV_URL, { download: true, header: true, complete: r => {
+    DB = r.data.filter(x => x["Shop name"]);
+    VIEW = [...DB];
+
+    // populate categories
+    const sel = document.getElementById('catSelect');
+    [...new Set(DB.map(x => x.Category))].forEach(c => {
+      const o = document.createElement('option'); o.value = c; o.text = c; sel.add(o);
+    });
+
+    render();
+  }});
 }
 
+// --- RENDER CARDS ---
 function render() {
   const container = document.getElementById('feed');
   container.innerHTML = VIEW.map(x => {
@@ -166,12 +167,19 @@ function render() {
           <a href="https://wa.me/91${String(x["Phone No."]).replace(/\D/g,'')}" class="btn btn-wa">WHATSAPP</a>
         </div>
         ${isAdm ? `<div style="font-size:10px; color:var(--muted); margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
-          Agent: ${x.AgentID} | Comm: ₹${x.AgentCommission} | Status: ${x.PaymentStatus}
+          Agent: ${x.AgentID || '-'} | Comm: ₹${x.AgentCommission || 0} | Status: ${x.PaymentStatus || '-'}
         </div>` : ''}
       </div>`;
   }).join('');
+
+  if(isAdm) {
+    document.getElementById('ad-tot').innerText = DB.length;
+    document.getElementById('ad-rev').innerText = "₹" + DB.reduce((s,x) => s + (Number(x.AgentCommission)||0), 0);
+    document.getElementById('ad-prem').innerText = DB.filter(x => x.Premium==='yes').length;
+  }
 }
 
+// --- SEARCH & FILTER ---
 function doSearch(q) {
   q = q.toLowerCase();
   VIEW = DB.filter(x => x["Shop name"].toLowerCase().includes(q) || x.Category.toLowerCase().includes(q) || x.Location.toLowerCase().includes(q));
@@ -183,31 +191,34 @@ function doFilter(c) {
   render();
 }
 
+// --- ADMIN LOGIN ---
 async function doLogin() {
   if(isAdm) return;
   const p = prompt("ENTER RIX ADMIN KEY:");
   if(!p) return;
+
   const msg = new TextEncoder().encode(p.trim().toLowerCase());
   const hashB = await crypto.subtle.digest('SHA-256', msg);
   const hex = Array.from(new Uint8Array(hashB)).map(b => b.toString(16).padStart(2,'0')).join('');
-  if(hex === HASH) {
+
+  if(hex === ADMIN_HASH) {
     isAdm = true;
     document.getElementById('admin-box').style.display = 'block';
-    document.getElementById('ad-tot').innerText = DB.length;
-    document.getElementById('ad-rev').innerText = "₹" + DB.reduce((s,x) => s + (Number(x.AgentCommission)||0), 0);
     render();
     alert("WELCOME BOSS");
-  } else alert("DENIED");
+  } else alert("ACCESS DENIED");
 }
 
 function exitAdm() { isAdm = false; document.getElementById('admin-box').style.display = 'none'; render(); }
 
+// --- SHARE ---
 function doShare() {
-  if(navigator.share) navigator.share({title:'RIX Network', url: 'https://shivanshmaurya01.github.io/RIX/'});
-  else alert('https://shivanshmaurya01.github.io/RIX/');
+  if(navigator.share) navigator.share({title:'VOID EMPIRE RIX', url: window.location.href});
+  else alert(window.location.href);
 }
 
-load();
+// --- INITIALIZE ---
+loadData();
 </script>
 </body>
 </html>
