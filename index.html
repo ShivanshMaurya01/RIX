@@ -1,220 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>RIX | GOD-LEVEL TERMINAL</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>RIX Terminal v6.0 | God-Level Industrial Portal</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
-    
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --bg: #020617; --surface: #0a101f; --card: #111827;
-            --accent: #3b82f6; --border: rgba(255, 255, 255, 0.08);
-            --text-main: #f1f5f9; --text-muted: #64748b;
-            --gold: #fbbf24; --success: #10b981; --danger: #ef4444;
-        }
+<!-- Leaflet & Plugins -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text-main); overflow-x: hidden; }
+<!-- Scripts -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
-        /* --- Header Logic --- */
-        #app-wrapper { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        header { padding: 30px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .glitch-title { font-size: 32px; font-weight: 800; letter-spacing: -1.5px; text-transform: uppercase; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* --- Terminal Controls --- */
-        .toolbar { display: flex; gap: 15px; margin-bottom: 30px; position: sticky; top: 20px; z-index: 1000; background: rgba(2,6,23,0.8); backdrop-filter: blur(15px); padding: 10px; border-radius: 16px; border: 1px solid var(--border); }
-        input, select { flex: 1; background: var(--surface); border: 1px solid var(--border); color: #fff; padding: 16px; border-radius: 12px; font-size: 14px; outline: none; }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
-
-        /* --- Grid System --- */
-        #feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .node-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; cursor: pointer; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
-        .node-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        .node-card.premium::after { content: 'PREMIUM NODE'; position: absolute; top: 0; right: 0; background: var(--gold); color: #000; font-size: 9px; font-weight: 900; padding: 4px 12px; border-radius: 0 16px 0 16px; }
-
-        /* --- Global Modal --- */
-        #details-modal { position: fixed; inset: 0; background: rgba(2,6,23,0.99); z-index: 3000; display: none; padding: 40px; overflow-y: auto; }
-        .modal-content { max-width: 800px; margin: 0 auto; }
-        .v-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 40px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; }
-
-        /* --- Map HUD --- */
-        #map-wrap { height: 0; overflow: hidden; transition: 0.5s ease; margin-bottom: 30px; border-radius: 16px; border: 1px solid var(--border); }
-        #map { height: 450px; width: 100%; }
-
-        /* --- Navigation --- */
-        nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border); padding: 15px 50px; border-radius: 100px; display: flex; gap: 50px; backdrop-filter: blur(20px); z-index: 2000; }
-        .nav-btn { color: var(--text-muted); font-size: 24px; cursor: pointer; transition: 0.3s; }
-        .nav-btn:hover { color: var(--accent); }
-    </style>
+<style>
+:root{
+--bg:#020617;--surface:#0a101f;--card:#111827;--accent:#3b82f6;--border:rgba(255,255,255,0.08);
+--text-main:#f1f5f9;--text-muted:#64748b;--gold:#fbbf24;--success:#10b981;--danger:#ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;}
+body{background:var(--bg);color:var(--text-main);overflow-x:hidden;}
+#app-wrapper{max-width:1400px;margin:0 auto;padding:20px;}
+header{display:flex;justify-content:space-between;align-items:center;padding:30px 0;border-bottom:1px solid var(--border);margin-bottom:30px;}
+.glitch-title{font-size:32px;font-weight:800;letter-spacing:-1.5px;text-transform:uppercase;background:linear-gradient(to right,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.toolbar{display:flex;gap:15px;margin-bottom:30px;position:sticky;top:20px;z-index:1000;background:rgba(2,6,23,0.8);backdrop-filter:blur(15px);padding:10px;border-radius:16px;border:1px solid var(--border);}
+input,select{flex:1;background:var(--surface);border:1px solid var(--border);color:#fff;padding:16px;border-radius:12px;font-size:14px;outline:none;}
+input:focus{border-color:var(--accent);box-shadow:0 0 20px rgba(59,130,246,0.2);}
+#feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
+.node-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;cursor:pointer;transition:0.4s cubic-bezier(0.4,0,0.2,1);position:relative;}
+.node-card:hover{transform:translateY(-10px);border-color:var(--accent);box-shadow:0 20px 40px rgba(0,0,0,0.5);}
+.node-card.premium::after{content:'PREMIUM NODE';position:absolute;top:0;right:0;background:var(--gold);color:#000;font-size:9px;font-weight:900;padding:4px 12px;border-radius:0 16px 0 16px;}
+#details-modal{position:fixed;inset:0;background:rgba(2,6,23,0.99);z-index:3000;display:none;padding:40px;overflow-y:auto;}
+.modal-content{max-width:800px;margin:0 auto;}
+.v-card{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:40px;border-radius:24px;border:1px solid var(--border);margin-bottom:20px;position:relative;}
+#map-wrap{height:0;overflow:hidden;transition:0.5s ease;margin-bottom:30px;border-radius:16px;border:1px solid var(--border);}
+#map{height:450px;width:100%;}
+nav{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.9);border:1px solid var(--border);padding:15px 50px;border-radius:100px;display:flex;gap:50px;backdrop-filter:blur(20px);z-index:2000;}
+.nav-btn{color:var(--text-muted);font-size:24px;cursor:pointer;transition:0.3s;}
+.nav-btn:hover{color:var(--accent);}
+</style>
 </head>
-
 <body>
+
 <div id="app-wrapper">
-    <header>
-        <div class="glitch-title">RIX GLOBAL</div>
-        <div id="status-line" style="font-family:'JetBrains Mono'; font-size:11px; color:var(--success)">SYSTEM_READY // SECURE_LINE_81.24</div>
-    </header>
+<header>
+<div class="glitch-title">RIX GLOBAL</div>
+<div id="status-line" style="font-family:'JetBrains Mono';font-size:11px;color:var(--success)">SYSTEM_READY // SECURE_LINE_81.24</div>
+</header>
 
-    <div class="toolbar">
-        <input type="text" id="mainSearch" placeholder="Search Global Index..." oninput="runFilter()">
-        <select id="sectorFilter" onchange="runFilter()"><option value="">ALL SECTORS</option></select>
-        <button onclick="toggleMap()" style="background:var(--accent); color:white; border:none; padding:0 25px; border-radius:12px; font-weight:700; cursor:pointer;">HUD MAP</button>
-    </div>
+<div class="toolbar">
+<input type="text" id="mainSearch" placeholder="Search Global Index..." oninput="runFilter()">
+<select id="sectorFilter" onchange="runFilter()"><option value="">ALL SECTORS</option></select>
+<button onclick="toggleMap()" style="background:var(--accent);color:white;border:none;padding:0 25px;border-radius:12px;font-weight:700;cursor:pointer;">HUD MAP</button>
+</div>
 
-    <div id="map-wrap"><div id="map"></div></div>
-    <main id="feed"></main>
+<div id="map-wrap"><div id="map"></div></div>
+<main id="feed"></main>
 </div>
 
 <div id="details-modal">
-    <div class="modal-content" id="modal-body"></div>
+<div class="modal-content" id="modal-body"></div>
 </div>
 
 <nav>
-    <div class="nav-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⌂</div>
-    <div class="nav-btn" onclick="openAdmin()">🛡</div>
-    <div class="nav-btn" onclick="handleShare()">📤</div>
+<div class="nav-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⌂</div>
+<div class="nav-btn" onclick="openAdmin()">🛡</div>
+<div class="nav-btn" onclick="handleShare()">📤</div>
 </nav>
 
 <script>
-    const API = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
-    const ADMIN_HASH = "0608679d63c5008064436894080183e8784918e7e17042079090b8216c55209c"; 
-    
-    let MASTER_DATA = [], MAP, MARKER_CLUSTER;
+const API="https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
+const ADMIN_HASH="0608679d63c5008064436894080183e8784918e7e17042079090b8216c55209c";
 
-    async function init() {
-        const res = await fetch(API);
-        const text = await res.text();
-        Papa.parse(text, {
-            header: true,
-            complete: (r) => {
-                MASTER_DATA = r.data.filter(x => x["Shop name"]);
-                setupMap();
-                loadSectors();
-                render(MASTER_DATA);
-            }
-        });
-    }
+let MASTER_DATA=[],MAP,MARKER_CLUSTER,RECENT_NODES=[];
 
-    function render(data) {
-        const feed = document.getElementById('feed');
-        feed.innerHTML = data.map((item, idx) => `
-            <div class="node-card ${item.Premium==='yes'?'premium':''}" onclick="showInfo(${idx})">
-                <div style="font-family:'JetBrains Mono'; font-size:10px; color:var(--accent); margin-bottom:10px;">NODE_${idx+1000}</div>
-                <h2 style="font-size:20px; margin-bottom:8px;">${item["Shop name"]}</h2>
-                <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">📍 ${item.Location}</p>
-                <div style="display:flex; gap:8px;">
-                    <span style="background:rgba(59,130,246,0.1); color:var(--accent); padding:4px 10px; border-radius:4px; font-size:10px; font-weight:800;">${item.Category}</span>
-                </div>
-            </div>
-        `).join('');
-        updateMapMarkers(data);
-    }
+async function init(){
+const res=await fetch(API);
+const text=await res.text();
+Papa.parse(text,{header:true,complete:(r)=>{
+MASTER_DATA=r.data.filter(x=>x["Shop name"]);
+loadSectors();
+render(MASTER_DATA);
+setupMap();
+loadRecent();
+}});
+}
 
-    function showInfo(idx) {
-        const item = MASTER_DATA[idx];
-        const modal = document.getElementById('details-modal');
-        modal.innerHTML = `
-            <div class="modal-content">
-                <div class="v-card" id="v-card-capture">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <div>
-                            <h1 style="font-size:32px;">${item["Shop name"]}</h1>
-                            <p style="color:var(--accent); letter-spacing:2px; font-weight:700;">${item.Category}</p>
-                        </div>
-                        <div style="text-align:right;">
-                            <div style="font-family:'JetBrains Mono'; font-size:12px;">ID: RIX-${idx+5000}</div>
-                            <div style="color:var(--success); font-size:11px;">● VERIFIED SECURE</div>
-                        </div>
-                    </div>
-                    <div style="margin-top:40px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                        <div><small style="color:var(--text-muted)">CONTACT</small><div style="font-size:18px;">${item["Phone No."]}</div></div>
-                        <div><small style="color:var(--text-muted)">LOCATION</small><div style="font-size:18px;">${item.Location}</div></div>
-                    </div>
-                </div>
-                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:15px;">
-                    <a href="tel:${item["Phone No."]}" style="background:var(--accent); color:white; text-align:center; padding:15px; border-radius:12px; text-decoration:none; font-weight:800;">CALL</a>
-                    <button onclick="downloadCard()" style="background:var(--surface); color:white; border:1px solid var(--border); padding:15px; border-radius:12px; font-weight:800; cursor:pointer;">SAVE V-CARD</button>
-                    <button onclick="closeInfo()" style="background:var(--danger); color:white; border:none; padding:15px; border-radius:12px; font-weight:800; cursor:pointer;">EXIT</button>
-                </div>
-            </div>
-        `;
-        modal.style.display = 'block';
-    }
+function render(data){
+const feed=document.getElementById('feed');
+feed.innerHTML=data.map((item,idx)=>`
+<div class="node-card ${item.Premium==='yes'?'premium':''}" onclick="showInfo(${idx})">
+<div style="font-family:'JetBrains Mono';font-size:10px;color:var(--accent);margin-bottom:10px;">NODE_${idx+1000}</div>
+<h2 style="font-size:20px;margin-bottom:8px;">${item["Shop name"]}</h2>
+<p style="font-size:13px;color:var(--text-muted);margin-bottom:15px;">📍 ${item.Location}</p>
+<div style="display:flex;gap:8px;">
+<span style="background:rgba(59,130,246,0.1);color:var(--accent);padding:4px 10px;border-radius:4px;font-size:10px;font-weight:800;">${item.Category}</span>
+</div>
+</div>
+`).join('');
+updateMapMarkers(data);
+}
 
-    async function downloadCard() {
-        const card = document.getElementById('v-card-capture');
-        const canvas = await html2canvas(card, { backgroundColor: '#020617' });
-        const link = document.createElement('a');
-        link.download = 'RIX_B_CARD.png';
-        link.href = canvas.toDataURL();
-        link.click();
-    }
+function showInfo(idx){
+const item=MASTER_DATA[idx];
+RECENT_NODES=[idx,...RECENT_NODES.filter(x=>x!==idx)].slice(0,10);
+localStorage.setItem("rix_recent",JSON.stringify(RECENT_NODES));
+const modal=document.getElementById('details-modal');
+modal.innerHTML=`
+<div class="modal-content">
+<div class="v-card" id="v-card-capture">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;">
+<div>
+<h1 style="font-size:32px;">${item["Shop name"]}</h1>
+<p style="color:var(--accent);letter-spacing:2px;font-weight:700;">${item.Category}</p>
+</div>
+<div style="text-align:right;">
+<div style="font-family:'JetBrains Mono';font-size:12px;">ID: RIX-${idx+5000}</div>
+<div style="color:var(--success);font-size:11px;">● VERIFIED SECURE</div>
+</div>
+</div>
+<div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+<div><small style="color:var(--text-muted)">CONTACT</small><div style="font-size:18px;">${item["Phone No."]}</div></div>
+<div><small style="color:var(--text-muted)">LOCATION</small><div style="font-size:18px;">${item.Location}</div></div>
+</div>
+<div style="margin-top:30px;display:flex;gap:15px;">
+<a href="tel:${item["Phone No."]}" style="flex:1;background:var(--accent);color:white;text-align:center;padding:15px;border-radius:12px;text-decoration:none;font-weight:800;">CALL</a>
+<button onclick="downloadCard()" style="flex:1;background:var(--surface);color:white;border:1px solid var(--border);padding:15px;border-radius:12px;font-weight:800;cursor:pointer;">SAVE V-CARD</button>
+<button onclick="closeInfo()" style="flex:1;background:var(--danger);color:white;border:none;padding:15px;border-radius:12px;font-weight:800;cursor:pointer;">EXIT</button>
+</div>
+<div id="qrcode" style="margin-top:25px;"></div>
+</div>
+`;
+QRCode.toCanvas(document.getElementById('qrcode'),`RIX-${idx+5000}`,{width:120},function(error){if(error)console.error(error)});
+modal.style.display='block';
+}
 
-    function closeInfo() { document.getElementById('details-modal').style.display = 'none'; }
+async function downloadCard(){
+const card=document.getElementById('v-card-capture');
+const canvas=await html2canvas(card,{backgroundColor:'#020617'});
+const link=document.createElement('a');
+link.download='RIX_B_CARD.png';
+link.href=canvas.toDataURL();
+link.click();
+}
 
-    function setupMap() {
-        MAP = L.map('map').setView([26.2243, 81.2407], 13);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(MAP);
-        MARKER_CLUSTER = L.markerClusterGroup();
-        MAP.addLayer(MARKER_CLUSTER);
-    }
+function closeInfo(){document.getElementById('details-modal').style.display='none';}
 
-    function updateMapMarkers(list) {
-        MARKER_CLUSTER.clearLayers();
-        list.forEach(item => {
-            if(item.Lat && item.Long) {
-                const m = L.marker([item.Lat, item.Long]).bindPopup(`<b>${item["Shop name"]}</b>`);
-                MARKER_CLUSTER.addLayer(m);
-            }
-        });
-    }
+function setupMap(){
+MAP=L.map('map').setView([26.2243,81.2407],13);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(MAP);
+MARKER_CLUSTER=L.markerClusterGroup();
+MAP.addLayer(MARKER_CLUSTER);
+updateMapMarkers(MASTER_DATA);
+}
 
-    function toggleMap() {
-        const w = document.getElementById('map-wrap');
-        w.style.height = w.style.height === '0px' || w.style.height === '' ? '450px' : '0px';
-        setTimeout(() => MAP.invalidateSize(), 300);
-    }
+function updateMapMarkers(list){
+MARKER_CLUSTER.clearLayers();
+list.forEach(item=>{if(item.Lat&&item.Long){const m=L.marker([item.Lat,item.Long]).bindPopup(`<b>${item["Shop name"]}</b>`);MARKER_CLUSTER.addLayer(m);}});
+}
 
-    function runFilter() {
-        const q = document.getElementById('mainSearch').value.toLowerCase();
-        const s = document.getElementById('sectorFilter').value;
-        const filtered = MASTER_DATA.filter(i => (i["Shop name"].toLowerCase().includes(q) || i.Location.toLowerCase().includes(q)) && (s==="" || i.Category===s));
-        render(filtered);
-    }
+function toggleMap(){
+const w=document.getElementById('map-wrap');
+w.style.height=w.style.height==='0px'||w.style.height===''?'450px':'0px';
+setTimeout(()=>MAP.invalidateSize(),300);
+}
 
-    function loadSectors() {
-        const sel = document.getElementById('sectorFilter');
-        [...new Set(MASTER_DATA.map(x => x.Category))].forEach(c => {
-            if(c) { let o = document.createElement('option'); o.value = o.text = c; sel.add(o); }
-        });
-    }
+function runFilter(){
+const q=document.getElementById('mainSearch').value.toLowerCase();
+const s=document.getElementById('sectorFilter').value;
+const filtered=MASTER_DATA.filter(i=>(i["Shop name"].toLowerCase().includes(q)||i.Location.toLowerCase().includes(q))&&(s===""||i.Category===s));
+render(filtered);
+}
 
-    async function openAdmin() {
-        const p = prompt("ACCESS KEY:");
-        const msg = new TextEncoder().encode(p.trim().toLowerCase());
-        const hashB = await crypto.subtle.digest('SHA-256', msg);
-        const hex = Array.from(new Uint8Array(hashB)).map(b => b.toString(16).padStart(2,'0')).join('');
-        if(hex === ADMIN_HASH) {
-            const rev = MASTER_DATA.reduce((s, x) => s + (Number(x.AgentCommission) || 0), 0);
-            alert(`ADMIN LOGGED IN\nTotal Revenue: ₹${rev.toLocaleString()}`);
-        }
-    }
+function loadSectors(){
+const sel=document.getElementById('sectorFilter');
+[...new Set(MASTER_DATA.map(x=>x.Category))].forEach(c=>{if(c){let o=document.createElement('option');o.value=o.text=o;sel.add(o);}});
+}
 
-    function handleShare() {
-        navigator.share({ title: 'RIX GLOBAL', url: window.location.href });
-    }
+async function openAdmin(){
+const p=prompt("ACCESS KEY:");
+if(!p)return;
+const msg=new TextEncoder().encode(p.trim().toLowerCase());
+const hashB=await crypto.subtle.digest('SHA-256',msg);
+const hex=Array.from(new Uint8Array(hashB)).map(b=>b.toString(16).padStart(2,'0')).join('');
+if(hex===ADMIN_HASH){
+const rev=MASTER_DATA.reduce((s,x)=>s+(Number(x.AgentCommission)||0),0);
+alert(`ADMIN LOGGED IN\nTotal Revenue: ₹${rev.toLocaleString()}`);
+}else{alert("ACCESS DENIED");}
+}
 
-    init();
+function handleShare(){
+if(navigator.share){navigator.share({title:'RIX GLOBAL',url:window.location.href});}else{prompt("Copy URL:",window.location.href);}
+}
+
+function loadRecent(){
+const r=JSON.parse(localStorage.getItem("rix_recent")||"[]");
+RECENT_NODES=r;
+}
+
+init();
 </script>
 </body>
 </html>
