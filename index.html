@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>RIX GLOBAL | GOD-LEVEL TERMINAL v6.1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>RIX TERMINAL v6.2 | INDUSTRIAL INTELLIGENCE</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -23,64 +23,75 @@
   --text-main:#f1f5f9; --text-muted:#64748b;
   --gold:#fbbf24; --success:#10b981; --danger:#ef4444;
 }
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif;}
-body{background:var(--bg);color:var(--text-main);overflow-x:hidden;}
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans',sans-serif; }
+body { background:var(--bg); color:var(--text-main); overflow-x:hidden; -webkit-tap-highlight-color:transparent; }
 
-#app-wrapper{max-width:1400px;margin:0 auto;padding:20px;}
-header{display:flex;justify-content:space-between;align-items:center;padding:30px 0;border-bottom:1px solid var(--border);margin-bottom:30px;}
-.glitch-title{font-size:32px;font-weight:800;letter-spacing:-1.5px;text-transform:uppercase;background:linear-gradient(to right,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+/* HUD Header */
+#app-wrapper { max-width:1400px; margin:0 auto; padding:20px; padding-bottom:120px; }
+header { display:flex; justify-content:space-between; align-items:center; padding:30px 0; border-bottom:1px solid var(--border); margin-bottom:30px; }
+.glitch-title { font-size:32px; font-weight:800; letter-spacing:-1.5px; text-transform:uppercase; background:linear-gradient(to right,#fff,var(--accent)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 
-.toolbar{display:flex;gap:15px;margin-bottom:30px;position:sticky;top:20px;z-index:1000;background:rgba(2,6,23,0.8);backdrop-filter:blur(15px);padding:10px;border-radius:16px;border:1px solid var(--border);}
-input,select{flex:1;background:var(--surface);border:1px solid var(--border);color:#fff;padding:16px;border-radius:12px;font-size:14px;outline:none;}
+/* Control Toolbar */
+.toolbar { display:flex; gap:15px; margin-bottom:30px; position:sticky; top:20px; z-index:1000; background:rgba(2,6,23,0.8); backdrop-filter:blur(15px); padding:12px; border-radius:18px; border:1px solid var(--border); }
+input, select { flex:1; background:var(--surface); border:1px solid var(--border); color:#fff; padding:16px; border-radius:14px; font-size:14px; outline:none; transition:0.3s; }
+input:focus { border-color:var(--accent); box-shadow:0 0 15px rgba(59,130,246,0.3); }
 
-#feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
-.node-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;cursor:pointer;transition:0.4s;position:relative;}
-.node-card:hover{transform:translateY(-10px);border-color:var(--accent);box-shadow:0 20px 40px rgba(0,0,0,0.5);}
-.node-card.premium::after{content:'PREMIUM';position:absolute;top:0;right:0;background:var(--gold);color:#000;font-size:9px;font-weight:900;padding:4px 12px;border-radius:0 16px 0 16px;}
+/* Industrial Feed */
+#feed { display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:20px; }
+.node-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; cursor:pointer; transition:0.4s cubic-bezier(0.4,0,0.2,1); position:relative; overflow:hidden; }
+.node-card:hover { transform:translateY(-8px); border-color:var(--accent); box-shadow:0 20px 40px rgba(0,0,0,0.5); }
+.node-card.premium::after { content:'PREMIUM'; position:absolute; top:0; right:0; background:var(--gold); color:#000; font-size:9px; font-weight:900; padding:4px 12px; border-radius:0 0 0 16px; }
 
-#details-modal{position:fixed;inset:0;background:rgba(2,6,23,0.99);z-index:3000;display:none;padding:20px;overflow-y:auto;}
-.modal-content{max-width:95%;margin:40px auto;}
-.v-card{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:30px;border-radius:24px;border:1px solid var(--border);position:relative;margin-bottom:20px;}
-.spec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin:20px 0;}
-.spec-item{background:rgba(255,255,255,0.03);padding:15px;border-radius:12px;border:1px solid var(--border);}
-.spec-label{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
-.spec-value{font-size:14px;font-weight:600;color:#fff;margin-top:5px;}
+/* Dossier Modal */
+#details-modal { position:fixed; inset:0; background:rgba(2,6,23,0.99); z-index:3000; display:none; padding:20px; overflow-y:auto; }
+.v-card { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); padding:30px; border-radius:28px; border:1px solid var(--border); position:relative; margin-bottom:20px; box-shadow:0 30px 60px rgba(0,0,0,0.4); }
+.spec-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin:20px 0; }
+.spec-item { background:rgba(255,255,255,0.03); padding:15px; border-radius:14px; border:1px solid var(--border); }
+.spec-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+.spec-value { font-size:14px; font-weight:600; color:#fff; }
 
-#map-wrap{height:0;overflow:hidden;transition:0.5s ease;margin-bottom:30px;border-radius:16px;border:1px solid var(--border);}
-#map{height:450px;width:100%;}
+/* Interactive Elements */
+#map-wrap { height:0; overflow:hidden; transition:0.6s cubic-bezier(0.4,0,0.2,1); margin-bottom:30px; border-radius:20px; border:1px solid var(--border); }
+#map { height:450px; width:100%; }
 
-nav{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.9);border:1px solid var(--border);padding:15px 50px;border-radius:100px;display:flex;gap:50px;backdrop-filter:blur(20px);z-index:2000;}
-.nav-btn{color:var(--text-muted);font-size:24px;cursor:pointer;transition:0.3s;}
-.nav-btn:hover{color:var(--accent);transform:scale(1.2);}
-.skeleton{height:200px;background:var(--card);border-radius:16px;animation:pulse 1.5s infinite;}
-@keyframes pulse{0%{opacity:0.5;}50%{opacity:0.8;}100%{opacity:0.5;}}
+nav { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:rgba(15,23,42,0.9); border:1px solid var(--border); padding:15px 45px; border-radius:100px; display:flex; gap:40px; backdrop-filter:blur(20px); z-index:2000; }
+.nav-btn { color:var(--text-muted); font-size:24px; cursor:pointer; transition:0.3s; }
+.nav-btn:hover { color:var(--accent); transform:scale(1.2) translateY(-5px); }
+
+/* Utilities */
+.status-tag { display:flex; align-items:center; gap:6px; font-size:10px; font-weight:700; }
+.pulse-dot { width:6px; height:6px; background:var(--success); border-radius:50%; animation: pulse-ring 1.5s infinite; }
+@keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2.4); opacity: 0; } }
+.skeleton { height:220px; background:var(--card); border-radius:16px; animation:skeleton-pulse 1.5s infinite; }
+@keyframes skeleton-pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.8; } }
 </style>
 </head>
 <body>
+
 <div id="app-wrapper">
-<header>
-<div class="glitch-title">RIX TERMINAL</div>
-<div id="status-line" style="font-family:'JetBrains Mono';font-size:11px;color:var(--success)">SYSTEM_ACTIVE // STABLE_v6.1</div>
-</header>
+  <header>
+    <div class="glitch-title">RIX TERMINAL</div>
+    <div id="status-line" style="font-family:'JetBrains Mono'; font-size:11px; color:var(--success)">SYSTEM_ENCRYPTED // v6.2.PRO</div>
+  </header>
 
-<div class="toolbar">
-<input type="text" id="mainSearch" placeholder="Search Industry, Name, or Location..." oninput="runFilter()">
-<select id="sectorFilter" onchange="runFilter()"><option value="">ALL SECTORS</option></select>
-<button onclick="toggleMap()" style="background:var(--accent);color:white;border:none;padding:0 25px;border-radius:12px;font-weight:700;cursor:pointer;">HUD MAP</button>
-</div>
+  <div class="toolbar">
+    <input type="text" id="mainSearch" placeholder="Filter by Name, Category, or Area..." oninput="runFilter()">
+    <select id="sectorFilter" onchange="runFilter()"><option value="">ALL SECTORS</option></select>
+    <button onclick="toggleMap()" style="background:var(--accent); color:white; border:none; padding:0 25px; border-radius:14px; font-weight:800; cursor:pointer;">HUD MAP</button>
+  </div>
 
-<div id="map-wrap"><div id="map"></div></div>
-<main id="feed"></main>
+  <div id="map-wrap"><div id="map"></div></div>
+  <main id="feed"></main>
 </div>
 
 <div id="details-modal">
-<div class="modal-content" id="modal-body"></div>
+  <div class="modal-content" id="modal-body"></div>
 </div>
 
 <nav>
-<div class="nav-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">🏠</div>
-<div class="nav-btn" onclick="openAdmin()">🛡️</div>
-<div class="nav-btn" onclick="handleShare()">📤</div>
+  <div class="nav-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">🏠</div>
+  <div class="nav-btn" onclick="openAdmin()">🛡️</div>
+  <div class="nav-btn" onclick="handleShare()">📤</div>
 </nav>
 
 <script>
@@ -95,27 +106,33 @@ async function init(){
   try{
     const res=await fetch(API);
     const text=await res.text();
-    Papa.parse(text,{header:true,complete:(r)=>{
-      MASTER_DATA=r.data.filter(x=>x["Shop name"]);
-      MASTER_DATA.forEach((item,idx)=>item._id='node_'+idx);
-      MASTER_DATA.forEach(item=>NODE_MAP[item._id]=item);
-      setupMap();
-      loadSectors();
-      render(MASTER_DATA);
-    }});
-  }catch(e){alert("Data Sync Failed. Check Connection.");}
+    Papa.parse(text, {
+      header:true,
+      skipEmptyLines: true,
+      complete:(r)=>{
+        MASTER_DATA = r.data.filter(x => x["Shop name"]);
+        MASTER_DATA.forEach((item, idx) => {
+          item._id = 'RIX_NODE_' + (idx + 7000);
+          NODE_MAP[item._id] = item;
+        });
+        setupMap();
+        loadSectors();
+        render(MASTER_DATA);
+      }
+    });
+  } catch(e) { alert("Data Sync Interrupted. Check Secure Line."); }
 }
 
 function render(data){
   const feed=document.getElementById('feed');
-  feed.innerHTML=data.map(item=>`
+  feed.innerHTML = data.map(item => `
     <div class="node-card ${item.Premium==='yes'?'premium':''}" onclick="showDossier('${item._id}')">
-      <div style="font-family:'JetBrains Mono';font-size:10px;color:var(--accent);margin-bottom:10px;">${item._id.toUpperCase()}</div>
-      <h2 style="font-size:18px;margin-bottom:8px;">${item["Shop name"]}</h2>
-      <p style="font-size:12px;color:var(--text-muted);margin-bottom:15px;">📍 ${item.Location}</p>
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="background:rgba(59,130,246,0.1);color:var(--accent);padding:4px 10px;border-radius:6px;font-size:10px;font-weight:800;">${item.Category}</span>
-        <span style="color:var(--success);font-size:10px;">● ONLINE</span>
+      <div style="font-family:'JetBrains Mono'; font-size:10px; color:var(--accent); margin-bottom:12px;">${item._id}</div>
+      <h2 style="font-size:19px; margin-bottom:8px; letter-spacing:-0.5px;">${item["Shop name"]}</h2>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:18px;">📍 ${item.Location}</p>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="background:rgba(59,130,246,0.1); color:var(--accent); padding:5px 12px; border-radius:8px; font-size:10px; font-weight:800; border:1px solid rgba(59,130,246,0.2);">${item.Category}</span>
+        <div class="status-tag"><div class="pulse-dot"></div><span>ACTIVE</span></div>
       </div>
     </div>
   `).join('');
@@ -125,67 +142,78 @@ function render(data){
 function showDossier(id){
   const item=NODE_MAP[id];
   const modal=document.getElementById('details-modal');
-  modal.innerHTML=`
-    <div class="modal-content">
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width:850px; margin:auto;">
       <div class="v-card" id="v-card-capture">
-        <div style="display:flex;justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div>
-            <h1 style="font-size:28px;margin-bottom:5px;">${item["Shop name"]}</h1>
-            <p style="color:var(--accent);font-weight:800;letter-spacing:1.5px;font-size:12px;">${item.Category.toUpperCase()}</p>
+            <h1 style="font-size:32px; font-weight:800; margin-bottom:4px;">${item["Shop name"]}</h1>
+            <p style="color:var(--accent); font-weight:800; letter-spacing:2px; font-size:12px;">${item.Category.toUpperCase()}</p>
           </div>
           <div style="text-align:right">
-            <div style="font-family:'JetBrains Mono';font-size:12px;color:var(--gold)">TRUST_SCORE: 98.4</div>
-            <div style="font-size:10px;color:var(--success)">VERIFIED BY RIX</div>
+            <div style="font-family:'JetBrains Mono'; font-size:12px; color:var(--gold)">SCORE: 98.4%</div>
+            <div style="font-size:10px; color:var(--success); font-weight:800;">VERIFIED INDUSTRIALIST</div>
           </div>
         </div>
+
         <div class="spec-grid">
-          <div class="spec-item"><div class="spec-label">Warehouse Size</div><div class="spec-value">${item.Area||'4500 Sq.Ft'}</div></div>
-          <div class="spec-item"><div class="spec-label">Power Load</div><div class="spec-value">${item.Power||'15 KVA (3-Phase)'}</div></div>
-          <div class="spec-item"><div class="spec-label">Primary Asset</div><div class="spec-value">${item.MainMachine||'CNC Industrial'}</div></div>
-          <div class="spec-item"><div class="spec-label">Established</div><div class="spec-value">${item.Since||'2012'}</div></div>
+          <div class="spec-item"><div class="spec-label">Facility Area</div><div class="spec-value">${item.Area || '4,500 Sq.Ft'}</div></div>
+          <div class="spec-item"><div class="spec-label">Power Profile</div><div class="spec-value">${item.Power || '15 KVA Grid'}</div></div>
+          <div class="spec-item"><div class="spec-label">Primary Infrastructure</div><div class="spec-value">${item.MainMachine || 'Industrial CNC'}</div></div>
+          <div class="spec-item"><div class="spec-label">Exchange ID</div><div class="spec-value">${id}</div></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:20px;">
-          <button onclick="downloadCard()" style="background:var(--accent);color:white;border:none;padding:15px;border-radius:12px;font-weight:800;cursor:pointer;">SAVE V-CARD</button>
-          <a href="https://www.google.com/maps?q=${parseFloat(item.Lat)},${parseFloat(item.Long)}" target="_blank" style="background:var(--surface);color:white;border:1px solid var(--border);padding:15px;border-radius:12px;text-decoration:none;text-align:center;font-weight:800;">NAVIGATE GATE</a>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px;">
+          <button onclick="downloadCard()" style="background:var(--accent); color:white; border:none; padding:18px; border-radius:15px; font-weight:800; cursor:pointer;">DOWNLOAD DOSSIER</button>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=${item.Lat},${item.Long}" target="_blank" style="background:var(--surface); color:white; border:1px solid var(--border); padding:18px; border-radius:15px; text-decoration:none; text-align:center; font-weight:800;">GATE NAVIGATION</a>
         </div>
-        <div id="qrcode" style="margin-top:20px;display:flex;justify-content:center;background:white;padding:10px;border-radius:12px;width:fit-content;margin:auto;"></div>
+        
+        <div style="margin-top:25px; display:flex; justify-content:center; background:white; padding:12px; border-radius:18px; width:fit-content; margin-left:auto; margin-right:auto;">
+          <div id="qrcode"></div>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:20px;">
-        <a href="tel:${item["Phone No."]}" style="background:var(--success);color:white;text-align:center;padding:18px;border-radius:16px;text-decoration:none;font-weight:900;">DIRECT CALL</a>
-        <button onclick="closeModal()" style="background:var(--danger);color:white;border:none;padding:18px;border-radius:16px;font-weight:900;cursor:pointer;">EXIT DOSSIER</button>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:10px;">
+        <a href="tel:${item["Phone No."]}" style="background:var(--success); color:white; text-align:center; padding:20px; border-radius:18px; text-decoration:none; font-weight:900; letter-spacing:1px;">ESTABLISH CONTACT</a>
+        <button onclick="closeModal()" style="background:var(--danger); color:white; border:none; padding:20px; border-radius:18px; font-weight:900; cursor:pointer;">EXIT TERMINAL</button>
       </div>
     </div>
   `;
   modal.style.display='block';
-  new QRCode(document.getElementById("qrcode"), {text:`https://rix.global/node/${id}`,width:100,height:100});
-  if(window.navigator.vibrate) window.navigator.vibrate(50);
+  new QRCode(document.getElementById("qrcode"), {text: `RIX_NODE:${id}`, width: 120, height: 120});
+  if(window.navigator.vibrate) window.navigator.vibrate([30, 50, 30]);
 }
 
 async function downloadCard(){
   const card=document.getElementById('v-card-capture');
-  const canvas=await html2canvas(card,{backgroundColor:'#020617'});
+  const canvas=await html2canvas(card, {backgroundColor: '#020617', scale: 2});
   const link=document.createElement('a');
-  link.download='RIX_INDUSTRIAL_DOSSIER.png';
-  link.href=canvas.toDataURL();
+  link.download = 'RIX_INDUSTRIAL_REPORT.png';
+  link.href = canvas.toDataURL("image/png");
   link.click();
 }
 
-function closeModal(){document.getElementById('details-modal').style.display='none';}
+function closeModal(){ document.getElementById('details-modal').style.display='none'; }
 
 function setupMap(){
-  MAP=L.map('map').setView([26.2243,81.2407],13);
+  MAP=L.map('map', {zoomControl: false}).setView([26.2243, 81.2407], 13);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(MAP);
-  MARKER_CLUSTER=L.markerClusterGroup();
+  MARKER_CLUSTER=L.markerClusterGroup({ spiderfyOnMaxZoom: true, showCoverageOnHover: false });
   MAP.addLayer(MARKER_CLUSTER);
 }
 
 function updateMarkers(list){
   MARKER_CLUSTER.clearLayers();
-  list.forEach(item=>{
+  list.forEach(item => {
     if(item.Lat && item.Long){
       const lat=parseFloat(item.Lat), lng=parseFloat(item.Long);
-      if(!isNaN(lat)&&!isNaN(lng)){
-        const m=L.marker([lat,lng]).bindPopup(`<b>${item["Shop name"]}</b><br>${item.Category}`);
+      if(!isNaN(lat) && !isNaN(lng)){
+        const m = L.marker([lat, lng]).bindPopup(`
+          <div style="color:#000; font-family:'Plus Jakarta Sans'">
+            <b style="font-size:14px;">${item["Shop name"]}</b><br>
+            <span style="color:#666; font-size:11px;">${item.Category}</span>
+          </div>
+        `);
         MARKER_CLUSTER.addLayer(m);
       }
     }
@@ -194,43 +222,51 @@ function updateMarkers(list){
 
 function toggleMap(){
   const w=document.getElementById('map-wrap');
-  w.style.height=w.style.height==='0px'||w.style.height===''?'450px':'0px';
-  setTimeout(()=>MAP.invalidateSize(),300);
+  const isOpen = w.style.height === '450px';
+  w.style.height = isOpen ? '0px' : '450px';
+  if(!isOpen) setTimeout(() => MAP.invalidateSize(), 400);
 }
 
 function runFilter(){
   const q=document.getElementById('mainSearch').value.toLowerCase();
   const s=document.getElementById('sectorFilter').value;
-  const filtered=MASTER_DATA.filter(i=>(
-    i["Shop name"].toLowerCase().includes(q)||
-    i.Location.toLowerCase().includes(q)||
+  const filtered = MASTER_DATA.filter(i => (
+    i["Shop name"].toLowerCase().includes(q) ||
+    i.Location.toLowerCase().includes(q) ||
     i.Category.toLowerCase().includes(q)
-  )&&(s===''||i.Category===s));
+  ) && (s === '' || i.Category === s));
   render(filtered);
 }
 
 function loadSectors(){
   const sel=document.getElementById('sectorFilter');
-  [...new Set(MASTER_DATA.map(x=>x.Category))].forEach(c=>{
-    if(c){ let o=document.createElement('option'); o.value=o.text=o; sel.add(o);}
+  const categories = [...new Set(MASTER_DATA.map(x => x.Category))].filter(Boolean);
+  categories.sort().forEach(c => {
+    let o = document.createElement('option');
+    o.value = o.text = c;
+    sel.add(o);
   });
 }
 
 async function openAdmin(){
-  const p=prompt("RIX SECURITY KEY:");
+  const p=prompt("AUTHENTICATION KEY REQUIRED:");
   if(!p) return;
   const msg=new TextEncoder().encode(p.trim().toLowerCase());
-  const hashB=await crypto.subtle.digest('SHA-256',msg);
-  const hex=Array.from(new Uint8Array(hashB)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  const hashB=await crypto.subtle.digest('SHA-256', msg);
+  const hex=Array.from(new Uint8Array(hashB)).map(b => b.toString(16).padStart(2, '0')).join('');
   if(hex===ADMIN_HASH){
-    const rev=MASTER_DATA.reduce((s,x)=>s+(Number(x.AgentCommission)||0),0);
-    alert(`ADMIN LOGGED IN\nNode Count: ${MASTER_DATA.length}\nProjected Revenue: ₹${rev.toLocaleString()}`);
-  }else{alert("VOID ACCESS DENIED.");}
+    const rev = MASTER_DATA.reduce((s, x) => s + (Number(x.AgentCommission) || 0), 0);
+    alert(`ACCESS GRANTED\nNodes Online: ${MASTER_DATA.length}\nSystem Revenue: ₹${rev.toLocaleString()}`);
+  } else { alert("ACCESS DENIED: INTRUSION DETECTED"); }
 }
 
 function handleShare(){
-  if(navigator.share) navigator.share({title:'RIX GLOBAL TERMINAL',url:window.location.href});
-  else{navigator.clipboard.writeText(window.location.href); alert("URL copied to clipboard");}
+  if(navigator.share) {
+    navigator.share({title:'RIX TERMINAL', url:window.location.href});
+  } else {
+    navigator.clipboard.writeText(window.location.href);
+    alert("Terminal URL copied to secure clipboard");
+  }
 }
 
 init();
