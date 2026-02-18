@@ -1,224 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>VOID EMPIRE RIX</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>RIX | GOD-LEVEL TERMINAL</title>
 
-<style>
-:root {
-  --bg: #020617; --surface: #0f172a; --card: #1e293b;
-  --text: #f8fafc; --muted: #64748b; --border: rgba(255,255,255,0.08); 
-  --primary: #3b82f6; --gold: #fbbf24; --green: #10b981;
-}
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { 
-  margin: 0; background: var(--bg); color: var(--text); 
-  font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden;
-}
+    <style>
+        :root {
+            --bg: #020617; --surface: #0a101f; --card: #111827;
+            --accent: #3b82f6; --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f1f5f9; --text-muted: #64748b;
+            --gold: #fbbf24; --success: #10b981; --danger: #ef4444;
+        }
 
-/* Splash Screen */
-#splash {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: var(--bg); z-index: 9999;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity 0.8s ease;
-}
-.logo-anim { font-size: 72px; font-weight: 800; letter-spacing: -4px;
-  background: linear-gradient(to bottom, #fff, #3b82f6);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  animation: pulse 1.5s infinite; }
-.loader-bar { width: 120px; height: 4px; background: #111; border-radius: 10px; margin-top: 20px; overflow: hidden; }
-.loader-progress { width: 100%; height: 100%; background: var(--primary); animation: load 2s ease-in-out; transform-origin: left; }
-@keyframes pulse { 0% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0.5; transform: scale(0.95); } }
-@keyframes load { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text-main); overflow-x: hidden; }
 
-/* Main Interface */
-#app-content { opacity: 0; transition: opacity 1s ease; padding-bottom: 120px; }
-header { padding: 60px 24px 30px; text-align: center; border-bottom: 1px solid var(--border); }
-h1 { font-size: 48px; font-weight: 800; margin: 0; letter-spacing: -2px; }
-.subtitle { color: var(--primary); font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+        /* --- Header Logic --- */
+        #app-wrapper { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        header { padding: 30px 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .glitch-title { font-size: 32px; font-weight: 800; letter-spacing: -1.5px; text-transform: uppercase; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* --- Terminal Controls --- */
+        .toolbar { display: flex; gap: 15px; margin-bottom: 30px; position: sticky; top: 20px; z-index: 1000; background: rgba(2,6,23,0.8); backdrop-filter: blur(15px); padding: 10px; border-radius: 16px; border: 1px solid var(--border); }
+        input, select { flex: 1; background: var(--surface); border: 1px solid var(--border); color: #fff; padding: 16px; border-radius: 12px; font-size: 14px; outline: none; }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); }
 
-.controls { position: sticky; top: 0; z-index: 100; background: rgba(2, 6, 23, 0.9); backdrop-filter: blur(15px); padding: 15px; border-bottom: 1px solid var(--border); }
-input, select { width: 100%; padding: 15px; border-radius: 15px; border: 1px solid var(--border); background: var(--surface); color: white; font-size: 16px; margin-bottom: 10px; }
+        /* --- Grid System --- */
+        #feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .node-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; cursor: pointer; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        .node-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .node-card.premium::after { content: 'PREMIUM NODE'; position: absolute; top: 0; right: 0; background: var(--gold); color: #000; font-size: 9px; font-weight: 900; padding: 4px 12px; border-radius: 0 16px 0 16px; }
 
-#feed { max-width: 700px; margin: auto; padding: 15px; display: grid; gap: 15px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 25px; padding: 20px; position: relative; }
-.card.premium { border: 1px solid var(--gold); background: linear-gradient(145deg, #0f172a, #020617); }
-.card.premium::after { content: 'PREMIUM'; position: absolute; top: 0; right: 0; background: var(--gold); color: #000; font-size: 9px; font-weight: 900; padding: 4px 12px; border-bottom-left-radius: 12px; }
+        /* --- Global Modal --- */
+        #details-modal { position: fixed; inset: 0; background: rgba(2,6,23,0.99); z-index: 3000; display: none; padding: 40px; overflow-y: auto; }
+        .modal-content { max-width: 800px; margin: 0 auto; }
+        .v-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 40px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; }
 
-.c-title { font-size: 22px; font-weight: 800; margin-bottom: 5px; }
-.c-loc { font-size: 13px; color: var(--muted); margin-bottom: 15px; }
-.tag-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 15px; }
-.tag { font-size: 10px; padding: 5px 10px; border-radius: 6px; background: rgba(255,255,255,0.05); color: var(--muted); font-weight: 700; border: 1px solid var(--border); }
+        /* --- Map HUD --- */
+        #map-wrap { height: 0; overflow: hidden; transition: 0.5s ease; margin-bottom: 30px; border-radius: 16px; border: 1px solid var(--border); }
+        #map { height: 450px; width: 100%; }
 
-.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.btn { padding: 14px; border-radius: 14px; text-align: center; text-decoration: none; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
-.btn-call { background: var(--card); color: white; border: 1px solid var(--border); }
-.btn-wa { background: var(--primary); color: white; }
-
-/* Admin dashboard */
-#admin-box { display: none; background: #000; padding: 20px; border-bottom: 2px solid var(--primary); }
-.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.stat-item { background: #111; padding: 15px; border-radius: 15px; }
-.stat-item small { font-size: 9px; color: var(--muted); text-transform: uppercase; }
-.stat-item div { font-size: 22px; font-weight: 800; margin-top: 5px; }
-
-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 25px; display: flex; justify-content: space-around; padding: 15px; z-index: 2000; }
-.nav-i { font-size: 24px; cursor: pointer; }
-.fab { background: var(--primary); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; margin-top: -45px; border: 5px solid var(--bg); font-size: 30px; color: white; }
-</style>
+        /* --- Navigation --- */
+        nav { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.9); border: 1px solid var(--border); padding: 15px 50px; border-radius: 100px; display: flex; gap: 50px; backdrop-filter: blur(20px); z-index: 2000; }
+        .nav-btn { color: var(--text-muted); font-size: 24px; cursor: pointer; transition: 0.3s; }
+        .nav-btn:hover { color: var(--accent); }
+    </style>
 </head>
+
 <body>
+<div id="app-wrapper">
+    <header>
+        <div class="glitch-title">RIX GLOBAL</div>
+        <div id="status-line" style="font-family:'JetBrains Mono'; font-size:11px; color:var(--success)">SYSTEM_READY // SECURE_LINE_81.24</div>
+    </header>
 
-<!-- Splash Screen -->
-<div id="splash">
-  <div class="logo-anim">RIX</div>
-  <div style="font-size: 10px; letter-spacing: 3px; color: var(--muted); margin-top: 5px;">VOID EMPIRE NETWORK</div>
-  <div class="loader-bar"><div class="loader-progress"></div></div>
+    <div class="toolbar">
+        <input type="text" id="mainSearch" placeholder="Search Global Index..." oninput="runFilter()">
+        <select id="sectorFilter" onchange="runFilter()"><option value="">ALL SECTORS</option></select>
+        <button onclick="toggleMap()" style="background:var(--accent); color:white; border:none; padding:0 25px; border-radius:12px; font-weight:700; cursor:pointer;">HUD MAP</button>
+    </div>
+
+    <div id="map-wrap"><div id="map"></div></div>
+    <main id="feed"></main>
 </div>
 
-<!-- Admin Dashboard -->
-<div id="admin-box">
-  <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-    <b style="color:var(--primary)">ADMIN COMMAND</b> 
-    <button onclick="exitAdm()" style="background:#333;color:#fff;border:none;padding:5px;border-radius:5px">X</button>
-  </div>
-  <div class="stat-grid">
-    <div class="stat-item"><small>Total Units</small><div id="ad-tot">0</div></div>
-    <div class="stat-item"><small>Total Revenue</small><div id="ad-rev" style="color:var(--green)">₹0</div></div>
-    <div class="stat-item"><small>Premium Shops</small><div id="ad-prem">0</div></div>
-  </div>
+<div id="details-modal">
+    <div class="modal-content" id="modal-body"></div>
 </div>
 
-<!-- Main App -->
-<div id="app-content">
-  <header>
-    <h1>VOID EMPIRE RIX</h1>
-    <div class="subtitle">Secured Industrial & Service Network</div>
-  </header>
-
-  <div class="controls">
-    <input type="text" placeholder="Search shop, sector, area..." oninput="doSearch(this.value)">
-    <select id="catSelect" onchange="doFilter(this.value)"><option value="">All Categories</option></select>
-  </div>
-
-  <main id="feed"></main>
-
-  <nav>
-    <div class="nav-i" onclick="window.scrollTo(0,0)">🏠</div>
-    <a href="https://wa.me/918146518503" class="fab">+</a>
-    <div class="nav-i" onclick="doShare()">📤</div>
-    <div class="nav-i" onclick="doLogin()">🛡️</div>
-  </nav>
-</div>
+<nav>
+    <div class="nav-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⌂</div>
+    <div class="nav-btn" onclick="openAdmin()">🛡</div>
+    <div class="nav-btn" onclick="handleShare()">📤</div>
+</nav>
 
 <script>
-// --- CONFIG ---
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
-const ADMIN_HASH = "0608679d63c5008064436894080183e8784918e7e17042079090b8216c55209c"; // password: rix786
+    const API = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSV8re2vW-TnHXqnW6LRXuwcU_NJScWKEj-EL9M0Ou6t3CAuUg4oeILRlfllGtVvm6FThUqBhBfsDs4/pub?output=csv";
+    const ADMIN_HASH = "0608679d63c5008064436894080183e8784918e7e17042079090b8216c55209c"; 
+    
+    let MASTER_DATA = [], MAP, MARKER_CLUSTER;
 
-let DB = [], VIEW = [], isAdm = false;
+    async function init() {
+        const res = await fetch(API);
+        const text = await res.text();
+        Papa.parse(text, {
+            header: true,
+            complete: (r) => {
+                MASTER_DATA = r.data.filter(x => x["Shop name"]);
+                setupMap();
+                loadSectors();
+                render(MASTER_DATA);
+            }
+        });
+    }
 
-// --- SPLASH ---
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('splash').style.opacity = '0';
-    document.getElementById('app-content').style.opacity = '1';
-    setTimeout(() => document.getElementById('splash').remove(), 800);
-  }, 2000);
-});
+    function render(data) {
+        const feed = document.getElementById('feed');
+        feed.innerHTML = data.map((item, idx) => `
+            <div class="node-card ${item.Premium==='yes'?'premium':''}" onclick="showInfo(${idx})">
+                <div style="font-family:'JetBrains Mono'; font-size:10px; color:var(--accent); margin-bottom:10px;">NODE_${idx+1000}</div>
+                <h2 style="font-size:20px; margin-bottom:8px;">${item["Shop name"]}</h2>
+                <p style="font-size:13px; color:var(--text-muted); margin-bottom:15px;">📍 ${item.Location}</p>
+                <div style="display:flex; gap:8px;">
+                    <span style="background:rgba(59,130,246,0.1); color:var(--accent); padding:4px 10px; border-radius:4px; font-size:10px; font-weight:800;">${item.Category}</span>
+                </div>
+            </div>
+        `).join('');
+        updateMapMarkers(data);
+    }
 
-// --- LOAD CSV ---
-function loadData() {
-  Papa.parse(CSV_URL, { download: true, header: true, complete: r => {
-    DB = r.data.filter(x => x["Shop name"]);
-    VIEW = [...DB];
+    function showInfo(idx) {
+        const item = MASTER_DATA[idx];
+        const modal = document.getElementById('details-modal');
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="v-card" id="v-card-capture">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <h1 style="font-size:32px;">${item["Shop name"]}</h1>
+                            <p style="color:var(--accent); letter-spacing:2px; font-weight:700;">${item.Category}</p>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-family:'JetBrains Mono'; font-size:12px;">ID: RIX-${idx+5000}</div>
+                            <div style="color:var(--success); font-size:11px;">● VERIFIED SECURE</div>
+                        </div>
+                    </div>
+                    <div style="margin-top:40px; display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                        <div><small style="color:var(--text-muted)">CONTACT</small><div style="font-size:18px;">${item["Phone No."]}</div></div>
+                        <div><small style="color:var(--text-muted)">LOCATION</small><div style="font-size:18px;">${item.Location}</div></div>
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:15px;">
+                    <a href="tel:${item["Phone No."]}" style="background:var(--accent); color:white; text-align:center; padding:15px; border-radius:12px; text-decoration:none; font-weight:800;">CALL</a>
+                    <button onclick="downloadCard()" style="background:var(--surface); color:white; border:1px solid var(--border); padding:15px; border-radius:12px; font-weight:800; cursor:pointer;">SAVE V-CARD</button>
+                    <button onclick="closeInfo()" style="background:var(--danger); color:white; border:none; padding:15px; border-radius:12px; font-weight:800; cursor:pointer;">EXIT</button>
+                </div>
+            </div>
+        `;
+        modal.style.display = 'block';
+    }
 
-    // populate categories
-    const sel = document.getElementById('catSelect');
-    [...new Set(DB.map(x => x.Category))].forEach(c => {
-      const o = document.createElement('option'); o.value = c; o.text = c; sel.add(o);
-    });
+    async function downloadCard() {
+        const card = document.getElementById('v-card-capture');
+        const canvas = await html2canvas(card, { backgroundColor: '#020617' });
+        const link = document.createElement('a');
+        link.download = 'RIX_B_CARD.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    }
 
-    render();
-  }});
-}
+    function closeInfo() { document.getElementById('details-modal').style.display = 'none'; }
 
-// --- RENDER CARDS ---
-function render() {
-  const container = document.getElementById('feed');
-  container.innerHTML = VIEW.map(x => {
-    const isP = x.Premium === 'yes' && x.PaymentStatus === 'paid';
-    return `
-      <div class="card ${isP ? 'premium' : ''}">
-        <div class="c-title">${x["Shop name"]}</div>
-        <div class="c-loc">📍 ${x.Location}, ${x.City}</div>
-        <div class="tag-row">
-          <span class="tag">${x.Category}</span>
-          ${x.Verified === 'yes' ? '<span class="tag" style="color:var(--green)">VERIFIED ✓</span>' : ''}
-          <span class="tag">⭐ ${x.Rating || '5.0'}</span>
-        </div>
-        <div class="actions">
-          <a href="tel:${x["Phone No."]}" class="btn btn-call">CALL</a>
-          <a href="https://wa.me/91${String(x["Phone No."]).replace(/\D/g,'')}" class="btn btn-wa">WHATSAPP</a>
-        </div>
-        ${isAdm ? `<div style="font-size:10px; color:var(--muted); margin-top:10px; border-top:1px dashed #333; padding-top:10px;">
-          Agent: ${x.AgentID || '-'} | Comm: ₹${x.AgentCommission || 0} | Status: ${x.PaymentStatus || '-'}
-        </div>` : ''}
-      </div>`;
-  }).join('');
+    function setupMap() {
+        MAP = L.map('map').setView([26.2243, 81.2407], 13);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(MAP);
+        MARKER_CLUSTER = L.markerClusterGroup();
+        MAP.addLayer(MARKER_CLUSTER);
+    }
 
-  if(isAdm) {
-    document.getElementById('ad-tot').innerText = DB.length;
-    document.getElementById('ad-rev').innerText = "₹" + DB.reduce((s,x) => s + (Number(x.AgentCommission)||0), 0);
-    document.getElementById('ad-prem').innerText = DB.filter(x => x.Premium==='yes').length;
-  }
-}
+    function updateMapMarkers(list) {
+        MARKER_CLUSTER.clearLayers();
+        list.forEach(item => {
+            if(item.Lat && item.Long) {
+                const m = L.marker([item.Lat, item.Long]).bindPopup(`<b>${item["Shop name"]}</b>`);
+                MARKER_CLUSTER.addLayer(m);
+            }
+        });
+    }
 
-// --- SEARCH & FILTER ---
-function doSearch(q) {
-  q = q.toLowerCase();
-  VIEW = DB.filter(x => x["Shop name"].toLowerCase().includes(q) || x.Category.toLowerCase().includes(q) || x.Location.toLowerCase().includes(q));
-  render();
-}
+    function toggleMap() {
+        const w = document.getElementById('map-wrap');
+        w.style.height = w.style.height === '0px' || w.style.height === '' ? '450px' : '0px';
+        setTimeout(() => MAP.invalidateSize(), 300);
+    }
 
-function doFilter(c) {
-  VIEW = c ? DB.filter(x => x.Category === c) : DB;
-  render();
-}
+    function runFilter() {
+        const q = document.getElementById('mainSearch').value.toLowerCase();
+        const s = document.getElementById('sectorFilter').value;
+        const filtered = MASTER_DATA.filter(i => (i["Shop name"].toLowerCase().includes(q) || i.Location.toLowerCase().includes(q)) && (s==="" || i.Category===s));
+        render(filtered);
+    }
 
-// --- ADMIN LOGIN ---
-async function doLogin() {
-  if(isAdm) return;
-  const p = prompt("ENTER RIX ADMIN KEY:");
-  if(!p) return;
+    function loadSectors() {
+        const sel = document.getElementById('sectorFilter');
+        [...new Set(MASTER_DATA.map(x => x.Category))].forEach(c => {
+            if(c) { let o = document.createElement('option'); o.value = o.text = c; sel.add(o); }
+        });
+    }
 
-  const msg = new TextEncoder().encode(p.trim().toLowerCase());
-  const hashB = await crypto.subtle.digest('SHA-256', msg);
-  const hex = Array.from(new Uint8Array(hashB)).map(b => b.toString(16).padStart(2,'0')).join('');
+    async function openAdmin() {
+        const p = prompt("ACCESS KEY:");
+        const msg = new TextEncoder().encode(p.trim().toLowerCase());
+        const hashB = await crypto.subtle.digest('SHA-256', msg);
+        const hex = Array.from(new Uint8Array(hashB)).map(b => b.toString(16).padStart(2,'0')).join('');
+        if(hex === ADMIN_HASH) {
+            const rev = MASTER_DATA.reduce((s, x) => s + (Number(x.AgentCommission) || 0), 0);
+            alert(`ADMIN LOGGED IN\nTotal Revenue: ₹${rev.toLocaleString()}`);
+        }
+    }
 
-  if(hex === ADMIN_HASH) {
-    isAdm = true;
-    document.getElementById('admin-box').style.display = 'block';
-    render();
-    alert("WELCOME BOSS");
-  } else alert("ACCESS DENIED");
-}
+    function handleShare() {
+        navigator.share({ title: 'RIX GLOBAL', url: window.location.href });
+    }
 
-function exitAdm() { isAdm = false; document.getElementById('admin-box').style.display = 'none'; render(); }
-
-// --- SHARE ---
-function doShare() {
-  if(navigator.share) navigator.share({title:'VOID EMPIRE RIX', url: window.location.href});
-  else alert(window.location.href);
-}
-
-// --- INITIALIZE ---
-loadData();
+    init();
 </script>
 </body>
 </html>
